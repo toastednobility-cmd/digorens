@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Abingdon Focus Hub - Noah Alexander</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            abingdon: {
+              pink: '#E83E8C',
+              pinkLight: '#FFF0F6',
+              navy: '#1A2530',
+              gold: '#D4AF37',
+              bgLight: '#F8F9FA',
+              bgDark: '#0F172A',
+              cardDark: '#1E293B'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+</head>
+<body class="bg-abingdon-bgLight dark:bg-abingdon-bgDark text-slate-800 dark:text-slate-100 min-h-screen pb-20 transition-colors duration-200">
+
+  <!-- Header -->
+  <header class="sticky top-0 z-30 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 px-4 py-3">
+    <div class="max-w-4xl mx-auto flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-abingdon-pink text-white flex items-center justify-center font-bold text-lg shadow-md shadow-pink-500/20">
+          NA
+        </div>
+        <div>
+          <h1 class="font-bold text-slate-900 dark:text-white text-base leading-tight">Noah Alexander</h1>
+          <p class="text-xs text-abingdon-pink font-semibold">Abingdon School • 5th Year</p>
+        </div>
+      </div>
+      <div class="flex items-center space-x-2">
+        <button id="themeToggle" class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition">
+          <i data-lucide="moon" class="w-5 h-5 hidden dark:block"></i>
+          <i data-lucide="sun" class="w-5 h-5 block dark:hidden"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="max-w-4xl mx-auto p-4 space-y-6">
+
+    <!-- Active Term Banner -->
+    <div class="bg-gradient-to-r from-pink-500 to-rose-600 rounded-2xl p-4 text-white shadow-lg relative overflow-hidden">
+      <div class="absolute right-0 top-0 bottom-0 opacity-10 pointer-events-none flex items-center pr-4">
+        <i data-lucide="calendar" class="w-32 h-32"></i>
+      </div>
+      <div class="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+        <div>
+          <div class="flex items-center space-x-2">
+            <span class="bg-white/20 text-white text-xs px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider backdrop-blur-sm">
+              Currently
+            </span>
+            <span class="text-xs font-medium text-pink-100">Michaelmas Term 2026</span>
+          </div>
+          <h2 class="text-xl font-bold mt-1">October Half-Term Holiday</h2>
+          <p class="text-xs text-pink-100 mt-0.5">16 October – 1 November • Boarders Return Nov 1</p>
+        </div>
+        <div class="bg-white/10 backdrop-blur-md rounded-xl p-2.5 px-3 text-center sm:text-right border border-white/20">
+          <p class="text-[10px] text-pink-100 font-medium uppercase tracking-wider">Next Term Begins</p>
+          <p class="text-sm font-bold">Lent Term: 5 Jan 2027</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Exam Countdown Widget -->
+    <section class="bg-white dark:bg-slate-800 rounded-2xl p-4 shadow-sm border border-slate-200 dark:border-slate-700">
+      <div class="flex items-center justify-between mb-3">
+        <div class="flex items-center space-x-2">
+          <i data-lucide="clock" class="w-5 h-5 text-abingdon-pink"></i>
+          <h2 class="font-bold text-slate-900 dark:text-white">Exam Countdown</h2>
+        </div>
+        <button onclick="openExamModal()" class="text-xs text-abingdon-pink font-semibold hover:underline flex items-center gap-1">
+          <i data-lucide="plus" class="w-3.5 h-3.5"></i> Add Exam
+        </button>
+      </div>
+      <div id="examContainer" class="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <!-- Injected via JS -->
+      </div>
+    </section>
+
+    <!-- Navigation Tabs -->
+    <div class="flex space-x-1 bg-slate-200/60 dark:bg-slate-800 p-1 rounded-xl">
+      <button onclick="switchTab('timetable')" id="tab-timetable" class="tab-btn flex-1 py-2 rounded-lg text-xs font-bold transition flex items-center justify-center space-x-1.5 bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm">
+        <i data-lucide="calendar-days" class="w-4 h-4"></i>
+        <span>Timetable</span>
+      </button>
+      <button onclick="switchTab('grades')" id="tab-grades" class="tab-btn flex-1 py-2 rounded-lg text-xs font-bold transition flex items-center justify-center space-x-1.5 text-slate-600 dark:text-slate-400">
+        <i data-lucide="graduation-cap" class="w-4 h-4"></i>
+        <span>Grade Tracker</span>
+      </button>
+      <button onclick="switchTab('tasks')" id="tab-tasks" class="tab-btn flex-1 py-2 rounded-lg text-xs font-bold transition flex items-center justify-center space-x-1.5 text-slate-600 dark:text-slate-400">
+        <i data-lucide="check-square" class="w-4 h-4"></i>
+        <span>Tasks</span>
+      </button>
+      <button onclick="switchTab('pomodoro')" id="tab-pomodoro" class="tab-btn flex-1 py-2 rounded-lg text-xs font-bold transition flex items-center justify-center space-x-1.5 text-slate-600 dark:text-slate-400">
+        <i data-lucide="timer" class="w-4 h-4"></i>
+        <span>Focus</span>
+      </button>
+    </div>
+
+    <!-- TAB 1: TIMETABLE -->
+    <div id="view-timetable" class="tab-content space-y-4">
+      <!-- Week Switcher -->
+      <div class="flex items-center justify-between bg-white dark:bg-slate-800 p-3 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+        <div class="flex items-center space-x-2">
+          <span id="weekLabel" class="text-sm font-bold px-3 py-1 bg-abingdon-pink/10 text-abingdon-pink rounded-lg border border-abingdon-pink/20">
+            Week A
+          </span>
+          <span class="text-xs text-slate-500 dark:text-slate-400">Abingdon 2-Week Cycle</span>
+        </div>
+        <div class="flex rounded-lg bg-slate-100 dark:bg-slate-900 p-1">
+          <button onclick="setWeek('A')" id="btnWeekA" class="px-3 py-1 rounded-md text-xs font-bold bg-white dark:bg-slate-800 shadow-sm text-slate-900 dark:text-white">Week A</button>
+          <button onclick="setWeek('B')" id="btnWeekB" class="px-3 py-1 rounded-md text-xs font-bold text-slate-500 dark:text-slate-400">Week B</button>
+        </div>
+      </div>
+
+      <!-- Day Switcher -->
+      <div class="flex space-x-1 overflow-x-auto no-scrollbar pb-1">
+        <button onclick="setDay(0)" class="day-btn flex-1 min-w-[64px] py-2 rounded-xl text-xs font-bold border border-slate-200 dark:border-slate-700 text-center bg-abingdon-pink text-white border-abingdon-pink">Mon</button>
+        <button onclick="setDay(1)" class="day-btn flex-1 min-w-[64px] py-2 rounded-xl text-xs font-bold border border-slate-200 dark:border-slate-700 text-center bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300">Tue</button>
+        <button onclick="setDay(2)" class="day-btn flex-1 min-w-[64px] py-2 rounded-xl text-xs font-bold border border-slate-200 dark:border-slate-700 text-center bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300">Wed</button>
+        <button onclick="setDay(3)" class="day-btn flex-1 min-w-[64px] py-2 rounded-xl text-xs font-bold border border-slate-200 dark:border-slate-700 text-center bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300">Thu</button>
+        <button onclick="setDay(4)" class="day-btn flex-1 min-w-[64px] py-2 rounded-xl text-xs font-bold border border-slate-200 dark:border-slate-700 text-center bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300">Fri</button>
+      </div>
+
+      <!-- Timetable Periods List -->
+      <div id="timetablePeriods" class="space-y-2">
+        <!-- Injected via JS -->
+      </div>
+    </div>
+
+    <!-- TAB 2: GRADE TRACKER -->
+    <div id="view-grades" class="tab-content hidden space-y-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-lg font-bold text-slate-900 dark:text-white">Customizable Grade Logger</h2>
+          <p class="text-xs text-slate-500">Track target grades and assessment scores</p>
+        </div>
+        <button onclick="openAddSubjectModal()" class="px-3 py-1.5 bg-abingdon-pink text-white rounded-xl text-xs font-bold flex items-center space-x-1 shadow-sm">
+          <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+          <span>Add Subject</span>
+        </button>
+      </div>
+
+      <div id="subjectsList" class="grid grid-cols-1 gap-3">
+        <!-- Injected via JS -->
+      </div>
+    </div>
+
+    <!-- TAB 3: TASKS (REGULAR LIST) -->
+    <div id="view-tasks" class="tab-content hidden space-y-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-lg font-bold text-slate-900 dark:text-white">Task & Homework Manager</h2>
+          <p class="text-xs text-slate-500">Your regular task checklist</p>
+        </div>
+        <button onclick="openAddTaskModal()" class="px-3 py-1.5 bg-abingdon-pink text-white rounded-xl text-xs font-bold flex items-center space-x-1 shadow-sm">
+          <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+          <span>New Task</span>
+        </button>
+      </div>
+
+      <div class="bg-white dark:bg-slate-800 rounded-2xl p-4 border border-slate-200 dark:border-slate-700 shadow-sm">
+        <div id="tasksList" class="space-y-2 min-h-[120px]">
+          <!-- Injected via JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 4: CUSTOMISABLE POMODORO TIMER -->
+    <div id="view-pomodoro" class="tab-content hidden space-y-4">
+      <section class="bg-white dark:bg-slate-800 rounded-2xl p-5 sm:p-6 border border-slate-200 dark:border-slate-700 shadow-sm max-w-xl mx-auto space-y-5">
+        <div class="text-center">
+          <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-1">Focus Study Timer</h2>
+          <p class="text-xs text-slate-500 dark:text-slate-400">Choose a preset or make a session that suits you.</p>
+        </div>
+
+        <div>
+          <h3 class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">Pomodoro presets</h3>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            <button type="button" data-preset="classic" onclick="selectPreset('classic')" class="pomo-preset rounded-xl border px-3 py-2.5 text-left transition">
+              <span class="block text-sm font-bold">Classic</span><span class="block text-xs opacity-75">25 / 5 min</span>
+            </button>
+            <button type="button" data-preset="short" onclick="selectPreset('short')" class="pomo-preset rounded-xl border px-3 py-2.5 text-left transition">
+              <span class="block text-sm font-bold">Short Focus</span><span class="block text-xs opacity-75">15 / 3 min</span>
+            </button>
+            <button type="button" data-preset="deep" onclick="selectPreset('deep')" class="pomo-preset rounded-xl border px-3 py-2.5 text-left transition">
+              <span class="block text-sm font-bold">Deep Work</span><span class="block text-xs opacity-75">50 / 10 min</span>
+            </button>
+            <button type="button" data-preset="long" onclick="selectPreset('long')" class="pomo-preset rounded-xl border px-3 py-2.5 text-left transition">
+              <span class="block text-sm font-bold">Long Focus</span><span class="block text-xs opacity-75">90 / 15 min</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="rounded-xl bg-slate-50 dark:bg-slate-900/60 p-3 sm:p-4">
+          <h3 class="text-sm font-bold text-slate-900 dark:text-white mb-3">Custom durations</h3>
+          <div class="grid grid-cols-2 gap-3">
+            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300">
+              Focus (minutes)
+              <input id="customFocusMinutes" type="number" min="1" max="180" value="25" inputmode="numeric" class="mt-1 w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 text-sm text-slate-900 dark:text-white outline-none focus:border-abingdon-pink">
+            </label>
+            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300">
+              Break (minutes)
+              <input id="customBreakMinutes" type="number" min="1" max="60" value="5" inputmode="numeric" class="mt-1 w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 text-sm text-slate-900 dark:text-white outline-none focus:border-abingdon-pink">
+            </label>
+          </div>
+          <button type="button" onclick="applyCustomTimer()" class="mt-3 w-full rounded-xl border border-abingdon-pink text-abingdon-pink py-2 text-sm font-bold hover:bg-pink-50 dark:hover:bg-pink-950/30 transition">Apply custom durations</button>
+          <p class="mt-2 text-[11px] text-slate-500 dark:text-slate-400">Focus: 1–180 minutes. Break: 1–60 minutes.</p>
+        </div>
+
+        <div class="flex items-center justify-center gap-2">
+          <button id="focusModeBtn" type="button" onclick="setTimerMode('focus')" class="rounded-xl px-4 py-2 text-sm font-bold transition">Focus</button>
+          <button id="breakModeBtn" type="button" onclick="setTimerMode('break')" class="rounded-xl px-4 py-2 text-sm font-bold transition">Break</button>
+        </div>
+
+        <div class="text-center py-2">
+          <div id="timerRing" class="w-48 h-48 mx-auto rounded-full border-4 border-abingdon-pink flex flex-col items-center justify-center shadow-inner transition-colors">
+            <span id="timerDisplay" role="timer" aria-live="off" class="text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white">25:00</span>
+            <span id="timerMode" class="text-xs font-semibold text-abingdon-pink uppercase tracking-widest mt-1">Focus Session</span>
+          </div>
+          <p id="timerStatus" role="status" aria-live="polite" class="mt-3 text-xs text-slate-500 dark:text-slate-400">Ready when you are.</p>
+        </div>
+
+        <div class="flex items-center justify-center gap-3">
+          <button id="pomoStartBtn" type="button" onclick="toggleTimer()" class="px-6 py-2.5 bg-abingdon-pink text-white rounded-xl text-sm font-bold shadow-md hover:opacity-90 transition">Start Focus</button>
+          <button type="button" onclick="resetTimer()" class="p-2.5 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-600 transition" aria-label="Reset timer" title="Reset timer">
+            <i data-lucide="rotate-ccw" class="w-5 h-5"></i>
+          </button>
+        </div>
+
+        <label class="flex items-center justify-center gap-2 text-xs text-slate-600 dark:text-slate-300">
+          <input id="autoStartNext" type="checkbox" class="rounded border-slate-300 text-abingdon-pink focus:ring-abingdon-pink">
+          Automatically start the next focus/break session
+        </label>
+      </section>
+    </div>
+
+  </main>
+
+  <!-- MODAL: ADD LOG ENTRY -->
+  <div id="gradeModal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm">
+    <div class="bg-white dark:bg-slate-800 rounded-2xl p-5 w-full max-w-sm space-y-4 border border-slate-200 dark:border-slate-700">
+      <h3 id="gradeModalTitle" class="font-bold text-slate-900 dark:text-white text-base">Add Mark / Assessment</h3>
+      <input type="hidden" id="gradeSubjectId">
+      
+      <div>
+        <label class="block text-xs font-semibold text-slate-500 mb-1">Assessment Name</label>
+        <input type="text" id="gradeTitleInput" placeholder="e.g. Topic 3 Quiz" class="w-full px-3 py-2 bg-slate-100 dark:bg-slate-700 rounded-xl text-sm outline-none border border-transparent focus:border-abingdon-pink">
+      </div>
+      
+      <div class="grid grid-cols-2 gap-2">
+        <div>
+          <label class="block text-xs font-semibold text-slate-500 mb-1">Grade / Score</label>
+          <input type="text" id="gradeScoreInput" placeholder="e.g. 9 or 85%" class="w-full px-3 py-2 bg-slate-100 dark:bg-slate-700 rounded-xl text-sm outline-none border border-transparent focus:border-abingdon-pink">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-500 mb-1">Date</label>
+          <input type="date" id="gradeDateInput" class="w-full px-3 py-2 bg-slate-100 dark:bg-slate-700 rounded-xl text-sm outline-none border border-transparent focus:border-abingdon-pink text-xs">
+        </div>
+      </div>
+
+      <div class="flex space-x-2 pt-2">
+        <button onclick="closeGradeModal()" class="flex-1 py-2 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-xl text-xs font-bold">Cancel</button>
+        <button onclick="saveGradeEntry()" class="flex-1 py-2 bg-abingdon-pink text-white rounded-xl text-xs font-bold">Save Grade</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: EDIT TARGET GRADE -->
+  <div id="targetModal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm">
+    <div class="bg-white dark:bg-slate-800 rounded-2xl p-5 w-full max-w-sm space-y-4 border border-slate-200 dark:border-slate-700">
+      <h3 class="font-bold text-slate-900 dark:text-white text-base">Edit Target Grade</h3>
+      <input type="hidden" id="targetSubjectId">
+      
+      <div>
+        <label class="block text-xs font-semibold text-slate-500 mb-1">New Target Grade</label>
+        <input type="text" id="targetGradeInput" placeholder="e.g. 9 or A*" class="w-full px-3 py-2 bg-slate-100 dark:bg-slate-700 rounded-xl text-sm outline-none border border-transparent focus:border-abingdon-pink">
+      </div>
+
+      <div class="flex space-x-2 pt-2">
+        <button onclick="closeTargetModal()" class="flex-1 py-2 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-xl text-xs font-bold">Cancel</button>
+        <button onclick="saveTargetGrade()" class="flex-1 py-2 bg-abingdon-pink text-white rounded-xl text-xs font-bold">Save Target</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: ADD EXAM -->
+  <div id="examModal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm">
+    <div class="bg-white dark:bg-slate-800 rounded-2xl p-5 w-full max-w-sm space-y-4 border border-slate-200 dark:border-slate-700">
+      <h3 class="font-bold text-slate-900 dark:text-white text-base">Add Exam Countdown</h3>
+      <div>
+        <label class="block text-xs font-semibold text-slate-500 mb-1">Exam Title</label>
+        <input type="text" id="examTitleInput" placeholder="e.g. Physics Paper 1" class="w-full px-3 py-2 bg-slate-100 dark:bg-slate-700 rounded-xl text-sm outline-none border border-transparent focus:border-abingdon-pink">
+      </div>
+      <div>
+        <label class="block text-xs font-semibold text-slate-500 mb-1">Exam Date</label>
+        <input type="date" id="examDateInput" class="w-full px-3 py-2 bg-slate-100 dark:bg-slate-700 rounded-xl text-sm outline-none border border-transparent focus:border-abingdon-pink text-xs">
+      </div>
+      <div class="flex space-x-2 pt-2">
+        <button onclick="closeExamModal()" class="flex-1 py-2 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-xl text-xs font-bold">Cancel</button>
+        <button onclick="saveExam()" class="flex-1 py-2 bg-abingdon-pink text-white rounded-xl text-xs font-bold">Add Exam</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: ADD TASK -->
+  <div id="taskModal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm">
+    <div class="bg-white dark:bg-slate-800 rounded-2xl p-5 w-full max-w-sm space-y-4 border border-slate-200 dark:border-slate-700">
+      <h3 class="font-bold text-slate-900 dark:text-white text-base">New Homework / Task</h3>
+      <div>
+        <label class="block text-xs font-semibold text-slate-500 mb-1">Task Title</label>
+        <input type="text" id="taskTitleInput" placeholder="e.g. Chemistry Prep p.42" class="w-full px-3 py-2 bg-slate-100 dark:bg-slate-700 rounded-xl text-sm outline-none border border-transparent focus:border-abingdon-pink">
+      </div>
+      <div class="flex space-x-2 pt-2">
+        <button onclick="closeTaskModal()" class="flex-1 py-2 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-xl text-xs font-bold">Cancel</button>
+        <button onclick="saveTask()" class="flex-1 py-2 bg-abingdon-pink text-white rounded-xl text-xs font-bold">Add Task</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JS APP LOGIC -->
+  <script>
+    // Theme setup
+    const themeToggleBtn = document.getElementById('themeToggle');
+    themeToggleBtn.addEventListener('click', () => {
+      document.documentElement.classList.toggle('dark');
+    });
+
+    // Timetable Data extracted directly from screenshots
+    const timetableData = {
+      A: [
+        // Monday
+        [
+          { time: "08:35 - 09:00", name: "Tutor Time", code: "5/DB/JOW Tu - JOW", type: "reg" },
+          { time: "09:00 - 09:55", name: "Maths", code: "5M Ma1d (H) - MRE", room: "MRE" },
+          { time: "10:00 - 10:55", name: "Computer Science", code: "5A CS1 - APW", room: "APW" },
+          { time: "11:15 - 12:10", name: "English", code: "5S En3 (H) - CLW", room: "CLW" },
+          { time: "12:15 - 13:05", name: "Geography", code: "5C Gg (H) - AJA", room: "AJA" },
+          { time: "13:50 - 14:05", name: "PM Registration", code: "5/DB/JOW PMReg", type: "reg" },
+          { time: "14:05 - 14:55", name: "Latin", code: "5B La2 - DJTF", room: "DJTF" },
+          { time: "15:00 - 15:50", name: "Badminton", code: "5Bad2 - LHR", room: "Sports Hall" },
+          { time: "15:55 - 17:00", name: "Badminton Activity", code: "5Bad2 - LHR", type: "activity" }
+        ],
+        // Tuesday
+        [
+          { time: "08:35 - 09:00", name: "Assembly", code: "5/DB/JOW Ass - JOW", type: "reg" },
+          { time: "09:00 - 09:55", name: "Maths", code: "5M Ma1d - MRE", room: "MRE" },
+          { time: "10:00 - 10:55", name: "Computer Science", code: "5A CS1 (H) - APW", room: "APW" },
+          { time: "11:15 - 12:10", name: "French", code: "5F Fr1 (H) - JMA", room: "JMA" },
+          { time: "12:15 - 13:05", name: "Geography", code: "5C Gg - AJA", room: "AJA" },
+          { time: "13:50 - 14:05", name: "PM Registration", code: "5/DB/JOW PMReg", type: "reg" },
+          { time: "14:05 - 14:55", name: "Latin", code: "5B La2 (H) - DJTF", room: "DJTF" },
+          { time: "15:00 - 15:50", name: "Physics", code: "5S Ph3 - MCGW", room: "MCGW" },
+          { time: "16:00 - 17:00", name: "MUN (Model United Nations)", code: "MUN - DLJ, JFB", type: "activity" }
+        ],
+        // Wednesday
+        [
+          { time: "08:35 - 09:00", name: "Chapel", code: "5/DB/JOW Chap - JOW", type: "reg" },
+          { time: "09:00 - 09:55", name: "Biology", code: "5S Bi3 (H) - RCB", room: "RCB" },
+          { time: "10:00 - 10:55", name: "English", code: "5S En3 - CLW", room: "CLW" },
+          { time: "11:15 - 12:10", name: "Chemistry", code: "5S Ch3 - IM", room: "IM" },
+          { time: "12:15 - 13:05", name: "French", code: "5F Fr1 - JMA", room: "JMA" },
+          { time: "13:10 - 13:40", name: "IGCSE French Speaking", code: "French Speaking", type: "special" },
+          { time: "13:50 - 14:05", name: "PM Registration", code: "5/DB/JOW PMReg", type: "reg" },
+          { time: "14:05 - 14:55", name: "Geography", code: "5C Gg (H) - AJA", room: "AJA" },
+          { time: "15:00 - 15:50", name: "Physics", code: "5S Ph3 - MCGW", room: "MCGW" },
+          { time: "16:00 - 17:00", name: "SPORT Badminton Team", code: "Badminton Team - TEA", type: "activity" }
+        ],
+        // Thursday
+        [
+          { time: "08:35 - 09:00", name: "Tutor Time", code: "5/DB/JOW Tu - JOW", type: "reg" },
+          { time: "09:00 - 09:55", name: "Chemistry", code: "5S Ch3 (H) - IM", room: "IM" },
+          { time: "10:00 - 10:55", name: "Biology", code: "5S Bi3 - RCB", room: "RCB" },
+          { time: "11:15 - 12:10", name: "Badminton", code: "5Bad2 - LHR", room: "Sports Hall" },
+          { time: "12:15 - 13:05", name: "Badminton", code: "5Bad2 - LHR", room: "Sports Hall" },
+          { time: "13:50 - 14:05", name: "PM Registration", code: "5/DB/JOW PMReg", type: "reg" },
+          { time: "14:05 - 14:55", name: "Computer Science", code: "5A CS1 - APW", room: "APW" },
+          { time: "15:00 - 15:50", name: "Physics", code: "5S Ph3 (H) - MCGW", room: "MCGW" },
+          { time: "16:00 - 17:00", name: "The Abingdonian", code: "The Abingdonian - OLH", type: "activity" }
+        ],
+        // Friday
+        [
+          { time: "08:35 - 09:00", name: "Tutor Time", code: "5/DB/JOW Tu - JOW", type: "reg" },
+          { time: "09:00 - 09:55", name: "Maths", code: "5M Ma1d (H) - MRE", room: "MRE" },
+          { time: "10:00 - 10:55", name: "Latin", code: "5B La2 - DJTF", room: "DJTF" },
+          { time: "11:15 - 12:10", name: "French", code: "5F Fr1 (H) - JMA", room: "JMA" },
+          { time: "13:20 - 13:50", name: "Tutor Time / House Assembly", code: "5/DB/JOW", type: "reg" },
+          { time: "14:05 - 14:55", name: "English", code: "5S En3 (H) - CLW, CDK", room: "CLW" },
+          { time: "15:00 - 15:50", name: "Chemistry", code: "5S Ch3 - IM", room: "IM" },
+          { time: "16:00 - 17:00", name: "Debating", code: "Debating - IAM", type: "activity" }
+        ]
+      ],
+      B: [
+        // Monday
+        [
+          { time: "08:35 - 09:00", name: "Tutor Time", code: "5/DB/JOW Tu - JOW", type: "reg" },
+          { time: "09:00 - 09:55", name: "PE", code: "5S PE3 - TJD", room: "Sports Hall" },
+          { time: "10:00 - 10:55", name: "Latin", code: "5B La2 (H) - DJTF", room: "DJTF" },
+          { time: "11:15 - 12:10", name: "Chemistry", code: "5S Ch3 - IM", room: "IM" },
+          { time: "12:15 - 13:05", name: "Geography", code: "5C Gg - AJA", room: "AJA" },
+          { time: "13:50 - 14:05", name: "PM Registration", code: "5/DB/JOW PMReg", type: "reg" },
+          { time: "14:05 - 14:55", name: "Computer Science", code: "5A CS1 (H) - APW", room: "APW" },
+          { time: "15:00 - 15:50", name: "Badminton", code: "5Bad2 - LHR", room: "Sports Hall" },
+          { time: "15:55 - 17:00", name: "Badminton Activity", code: "5Bad2 - LHR", type: "activity" }
+        ],
+        // Tuesday
+        [
+          { time: "08:35 - 09:00", name: "Assembly", code: "5/DB/JOW Ass - JOW", type: "reg" },
+          { time: "09:00 - 09:55", name: "Maths", code: "5M Ma1d - MRE", room: "MRE" },
+          { time: "10:00 - 10:55", name: "Computer Science", code: "5A CS1 - APW", room: "APW" },
+          { time: "11:15 - 12:10", name: "French", code: "5F Fr1 (H) - JMA", room: "JMA" },
+          { time: "12:15 - 13:05", name: "Geography", code: "5C Gg (H) - AJA", room: "AJA" },
+          { time: "13:50 - 14:05", name: "PM Registration", code: "5/DB/JOW PMReg", type: "reg" },
+          { time: "14:05 - 14:55", name: "English", code: "5S En3 (H) - CLW", room: "CLW" },
+          { time: "15:00 - 15:50", name: "Latin", code: "5B La2 - DJTF", room: "DJTF" },
+          { time: "16:00 - 17:00", name: "MUN (Model United Nations)", code: "MUN - DLJ, JFB", type: "activity" }
+        ],
+        // Wednesday
+        [
+          { time: "08:35 - 09:00", name: "Chapel", code: "5/DB/JOW Chap - JOW", type: "reg" },
+          { time: "09:00 - 09:55", name: "French", code: "5F Fr1 - JMA", room: "JMA" },
+          { time: "10:00 - 10:55", name: "Biology", code: "5S Bi3 (H) - RCB", room: "RCB" },
+          { time: "11:15 - 12:10", name: "English", code: "5S En3 - CLW", room: "CLW" },
+          { time: "12:15 - 13:05", name: "Maths", code: "5M Ma1d (H) - MRE", room: "MRE" },
+          { time: "13:10 - 13:40", name: "IGCSE French Speaking", code: "French Speaking", type: "special" },
+          { time: "13:50 - 14:05", name: "PM Registration", code: "5/DB/JOW PMReg", type: "reg" },
+          { time: "14:05 - 14:55", name: "Geography", code: "5C Gg - AJA", room: "AJA" },
+          { time: "15:00 - 15:50", name: "Physics", code: "5S Ph3 - MCGW", room: "MCGW" },
+          { time: "16:00 - 17:00", name: "SPORT Badminton Team", code: "Badminton Team - TEA", type: "activity" }
+        ],
+        // Thursday
+        [
+          { time: "08:35 - 09:00", name: "Tutor Time", code: "5/DB/JOW Tu - JOW", type: "reg" },
+          { time: "09:00 - 09:55", name: "Physics", code: "5S Ph3 (H) - MCGW", room: "MCGW" },
+          { time: "10:00 - 10:55", name: "Chemistry", code: "5S Ch3 (H) - IM", room: "IM" },
+          { time: "11:15 - 12:10", name: "Badminton", code: "5Bad2 - LHR", room: "Sports Hall" },
+          { time: "12:15 - 13:05", name: "Badminton", code: "5Bad2 - LHR", room: "Sports Hall" },
+          { time: "13:50 - 14:05", name: "PM Registration", code: "5/DB/JOW PMReg", type: "reg" },
+          { time: "14:05 - 14:55", name: "Biology", code: "5S Bi3 - RCB", room: "RCB" },
+          { time: "15:00 - 15:50", name: "Computer Science", code: "5A CS1 (H) - APW", room: "APW" },
+          { time: "16:00 - 17:00", name: "The Abingdonian", code: "The Abingdonian - OLH", type: "activity" }
+        ],
+        // Friday
+        [
+          { time: "08:35 - 09:00", name: "Tutor Time", code: "5/DB/JOW Tu - JOW", type: "reg" },
+          { time: "09:00 - 09:55", name: "Maths", code: "5M Ma1d - MRE", room: "MRE" },
+          { time: "10:00 - 10:55", name: "Latin", code: "5B La2 (H) - DJTF", room: "DJTF" },
+          { time: "11:15 - 12:10", name: "French", code: "5F Fr1 (H) - JMA", room: "JMA" },
+          { time: "13:20 - 13:50", name: "House Assembly", code: "5/DB/JOW House Ass", type: "reg" },
+          { time: "14:05 - 14:55", name: "English", code: "5S En3 (H) - CLW", room: "CLW" },
+          { time: "15:00 - 15:50", name: "Biology", code: "5S Bi3 - RCB", room: "RCB" },
+          { time: "16:00 - 17:00", name: "Debating", code: "Debating - IAM", type: "activity" }
+        ]
+      ]
+    };
+
+    let currentWeek = 'A';
+    let currentDay = 0; // Mon
+
+    function setWeek(week) {
+      currentWeek = week;
+      document.getElementById('weekLabel').innerText = `Week ${week}`;
+      document.getElementById('btnWeekA').className = week === 'A' ? "px-3 py-1 rounded-md text-xs font-bold bg-white dark:bg-slate-800 shadow-sm text-slate-900 dark:text-white" : "px-3 py-1 rounded-md text-xs font-bold text-slate-500 dark:text-slate-400";
+      document.getElementById('btnWeekB').className = week === 'B' ? "px-3 py-1 rounded-md text-xs font-bold bg-white dark:bg-slate-800 shadow-sm text-slate-900 dark:text-white" : "px-3 py-1 rounded-md text-xs font-bold text-slate-500 dark:text-slate-400";
+      renderTimetable();
+    }
+
+    function setDay(dayIdx) {
+      currentDay = dayIdx;
+      const buttons = document.querySelectorAll('.day-btn');
+      buttons.forEach((btn, idx) => {
+        if (idx === dayIdx) {
+          btn.className = "day-btn flex-1 min-w-[64px] py-2 rounded-xl text-xs font-bold border border-slate-200 dark:border-slate-700 text-center bg-abingdon-pink text-white border-abingdon-pink";
+        } else {
+          btn.className = "day-btn flex-1 min-w-[64px] py-2 rounded-xl text-xs font-bold border border-slate-200 dark:border-slate-700 text-center bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300";
+        }
+      });
+      renderTimetable();
+    }
+
+    function renderTimetable() {
+      const container = document.getElementById('timetablePeriods');
+      const periods = timetableData[currentWeek][currentDay];
+      
+      container.innerHTML = periods.map(p => {
+        let badgeClass = "bg-pink-100 text-pink-700 dark:bg-pink-950/50 dark:text-pink-300";
+        if (p.type === 'reg') badgeClass = "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400";
+        if (p.type === 'activity') badgeClass = "bg-purple-100 text-purple-700 dark:bg-purple-950/50 dark:text-purple-300";
+        if (p.type === 'special') badgeClass = "bg-amber-100 text-amber-700 dark:bg-amber-950/50 dark:text-amber-300";
+
+        return `
+          <div class="bg-white dark:bg-slate-800 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-700 flex items-center justify-between shadow-sm">
+            <div class="space-y-0.5">
+              <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">${p.time}</span>
+              <h4 class="font-bold text-slate-900 dark:text-white text-sm">${p.name}</h4>
+              <p class="text-xs text-slate-500 font-mono">${p.code}</p>
+            </div>
+            ${p.room ? `<span class="px-2.5 py-1 rounded-lg text-xs font-bold ${badgeClass}">${p.room}</span>` : `<span class="px-2.5 py-1 rounded-lg text-xs font-bold ${badgeClass}">${p.type || 'Event'}</span>`}
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Exam Countdowns (Empty by default)
+    let exams = JSON.parse(localStorage.getItem('noah_exams')) || [];
+
+    function renderExams() {
+      const container = document.getElementById('examContainer');
+      if (exams.length === 0) {
+        container.innerHTML = `<p class="text-xs text-slate-400 italic col-span-2 text-center py-2">No upcoming exams added yet.</p>`;
+        return;
+      }
+      container.innerHTML = exams.map(e => {
+        const target = new Date(e.date);
+        const today = new Date();
+        const diffTime = target - today;
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        
+        return `
+          <div class="bg-slate-50 dark:bg-slate-900/50 p-3 rounded-xl border border-slate-200/80 dark:border-slate-700/80 flex items-center justify-between">
+            <div>
+              <h4 class="font-bold text-slate-900 dark:text-white text-xs">${e.title}</h4>
+              <p class="text-[11px] text-slate-500">${new Date(e.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
+            </div>
+            <div class="text-right">
+              <span class="text-lg font-black text-abingdon-pink">${diffDays > 0 ? diffDays : 0}</span>
+              <span class="text-[10px] text-slate-400 block font-semibold">days left</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function openExamModal() {
+      document.getElementById('examTitleInput').value = '';
+      document.getElementById('examDateInput').value = '';
+      document.getElementById('examModal').classList.remove('hidden');
+    }
+
+    function closeExamModal() {
+      document.getElementById('examModal').classList.add('hidden');
+    }
+
+    function saveExam() {
+      const title = document.getElementById('examTitleInput').value.trim();
+      const date = document.getElementById('examDateInput').value;
+      if (!title || !date) return;
+
+      exams.push({ id: 'e_' + Date.now(), title, date });
+      localStorage.setItem('noah_exams', JSON.stringify(exams));
+      renderExams();
+      closeExamModal();
+    }
+
+    // Customizable Grade Logger Data (Empty subjects with default Abingdon structure)
+    let subjects = JSON.parse(localStorage.getItem('noah_subjects')) || [
+      { id: 'maths', name: 'Maths', target: '9', logs: [] },
+      { id: 'bio', name: 'Biology', target: '8', logs: [] },
+      { id: 'chem', name: 'Chemistry', target: '8', logs: [] },
+      { id: 'cs', name: 'Computer Science', target: '9', logs: [] },
+      { id: 'latin', name: 'Latin', target: '8', logs: [] },
+      { id: 'french', name: 'French', target: '8', logs: [] },
+      { id: 'geog', name: 'Geography', target: '8', logs: [] },
+      { id: 'phys', name: 'Physics', target: '9', logs: [] }
+    ];
+
+    function renderGrades() {
+      const container = document.getElementById('subjectsList');
+      container.innerHTML = subjects.map(s => {
+        return `
+          <div class="bg-white dark:bg-slate-800 rounded-2xl p-4 border border-slate-200 dark:border-slate-700 shadow-sm space-y-3">
+            <div class="flex items-center justify-between">
+              <div>
+                <h3 class="font-bold text-slate-900 dark:text-white text-base">${s.name}</h3>
+                <span class="text-xs text-slate-500">Target Grade: <strong class="text-abingdon-pink">${s.target}</strong></span>
+              </div>
+              <div class="flex items-center space-x-1">
+                <button onclick="openEditTargetModal('${s.id}', '${s.target}')" title="Edit Target Grade" class="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200">
+                  <i data-lucide="edit-3" class="w-4 h-4"></i>
+                </button>
+                <button onclick="openAddGradeModal('${s.id}')" title="Add Grade Mark" class="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200">
+                  <i data-lucide="plus" class="w-4 h-4"></i>
+                </button>
+              </div>
+            </div>
+            
+            <div class="space-y-1.5">
+              ${s.logs.length === 0 ? '<p class="text-xs text-slate-400 italic">No assessment marks logged yet.</p>' : 
+                s.logs.map(l => `
+                  <div class="flex items-center justify-between text-xs p-2 rounded-xl bg-slate-50 dark:bg-slate-900/50">
+                    <span class="font-medium text-slate-700 dark:text-slate-300">${l.title}</span>
+                    <div class="flex items-center space-x-2">
+                      <span class="text-[10px] text-slate-400">${l.date}</span>
+                      <span class="font-bold text-abingdon-pink bg-pink-50 dark:bg-pink-950/50 px-2 py-0.5 rounded-md">${l.score}</span>
+                    </div>
+                  </div>
+                `).join('')
+              }
+            </div>
+          </div>
+        `;
+      }).join('');
+      lucide.createIcons();
+    }
+
+    function openAddGradeModal(subjectId) {
+      document.getElementById('gradeSubjectId').value = subjectId;
+      document.getElementById('gradeTitleInput').value = '';
+      document.getElementById('gradeScoreInput').value = '';
+      document.getElementById('gradeDateInput').value = new Date().toISOString().split('T')[0];
+      document.getElementById('gradeModal').classList.remove('hidden');
+    }
+
+    function closeGradeModal() {
+      document.getElementById('gradeModal').classList.add('hidden');
+    }
+
+    function saveGradeEntry() {
+      const subId = document.getElementById('gradeSubjectId').value;
+      const title = document.getElementById('gradeTitleInput').value.trim();
+      const score = document.getElementById('gradeScoreInput').value.trim();
+      const date = document.getElementById('gradeDateInput').value;
+
+      if (!title || !score) return;
+
+      const sub = subjects.find(s => s.id === subId);
+      if (sub) {
+        sub.logs.unshift({ title, score, date });
+        localStorage.setItem('noah_subjects', JSON.stringify(subjects));
+        renderGrades();
+        closeGradeModal();
+      }
+    }
+
+    function openEditTargetModal(subjectId, currentTarget) {
+      document.getElementById('targetSubjectId').value = subjectId;
+      document.getElementById('targetGradeInput').value = currentTarget;
+      document.getElementById('targetModal').classList.remove('hidden');
+    }
+
+    function closeTargetModal() {
+      document.getElementById('targetModal').classList.add('hidden');
+    }
+
+    function saveTargetGrade() {
+      const subId = document.getElementById('targetSubjectId').value;
+      const newTarget = document.getElementById('targetGradeInput').value.trim();
+      if (!newTarget) return;
+
+      const sub = subjects.find(s => s.id === subId);
+      if (sub) {
+        sub.target = newTarget;
+        localStorage.setItem('noah_subjects', JSON.stringify(subjects));
+        renderGrades();
+        closeTargetModal();
+      }
+    }
+
+    function openAddSubjectModal() {
+      const name = prompt("Enter new subject name:");
+      if (!name) return;
+      const target = prompt("Enter target grade (e.g., 8 or 9):", "8");
+      
+      const newSub = {
+        id: 'sub_' + Date.now(),
+        name: name,
+        target: target || '8',
+        logs: []
+      };
+      
+      subjects.push(newSub);
+      localStorage.setItem('noah_subjects', JSON.stringify(subjects));
+      renderGrades();
+    }
+
+    // Regular Task Manager List
+    let tasks = JSON.parse(localStorage.getItem('noah_tasks')) || [];
+
+    function renderTasks() {
+      const container = document.getElementById('tasksList');
+      if (tasks.length === 0) {
+        container.innerHTML = `<p class="text-xs text-slate-400 italic text-center py-4">No tasks added yet. Click 'New Task' above.</p>`;
+        return;
+      }
+      
+      container.innerHTML = tasks.map(t => `
+        <div class="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-900/50 rounded-xl shadow-sm text-xs border border-slate-200/80 dark:border-slate-700/80">
+          <span class="${t.completed ? 'line-through text-slate-400' : 'text-slate-800 dark:text-slate-200'} font-medium text-sm">${t.title}</span>
+          <div class="flex items-center space-x-2">
+            <button onclick="toggleTask('${t.id}')" class="text-slate-400 hover:text-abingdon-pink p-1">
+              <i data-lucide="${t.completed ? 'check-circle-2' : 'circle'}" class="w-5 h-5 ${t.completed ? 'text-abingdon-pink' : ''}"></i>
+            </button>
+            <button onclick="deleteTask('${t.id}')" class="text-slate-400 hover:text-red-500 p-1">
+              <i data-lucide="trash-2" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+      `).join('');
+      lucide.createIcons();
+    }
+
+    function openAddTaskModal() {
+      document.getElementById('taskTitleInput').value = '';
+      document.getElementById('taskModal').classList.remove('hidden');
+    }
+
+    function closeTaskModal() {
+      document.getElementById('taskModal').classList.add('hidden');
+    }
+
+    function saveTask() {
+      const title = document.getElementById('taskTitleInput').value.trim();
+      if (!title) return;
+
+      tasks.push({
+        id: 't_' + Date.now(),
+        title: title,
+        completed: false
+      });
+
+      localStorage.setItem('noah_tasks', JSON.stringify(tasks));
+      renderTasks();
+      closeTaskModal();
+    }
+
+    function toggleTask(id) {
+      const task = tasks.find(t => t.id === id);
+      if (task) {
+        task.completed = !task.completed;
+        localStorage.setItem('noah_tasks', JSON.stringify(tasks));
+        renderTasks();
+      }
+    }
+
+    function deleteTask(id) {
+      tasks = tasks.filter(t => t.id !== id);
+      localStorage.setItem('noah_tasks', JSON.stringify(tasks));
+      renderTasks();
+    }
+
+    // Customisable Pomodoro Timer
+    const pomodoroPresets = {
+      classic: { name: 'Classic', focus: 25, break: 5 },
+      short: { name: 'Short Focus', focus: 15, break: 3 },
+      deep: { name: 'Deep Work', focus: 50, break: 10 },
+      long: { name: 'Long Focus', focus: 90, break: 15 }
+    };
+    let activePreset = 'classic';
+    let focusMinutes = 25;
+    let breakMinutes = 5;
+    let timerModeValue = 'focus';
+    let timerSeconds = focusMinutes * 60;
+    let timerInterval = null;
+    let timerDeadline = null;
+
+    function timerModeDuration() {
+      return (timerModeValue === 'focus' ? focusMinutes : breakMinutes) * 60;
+    }
+
+    function updateTimerDisplay() {
+      const mins = Math.floor(Math.max(0, timerSeconds) / 60);
+      const secs = Math.max(0, timerSeconds) % 60;
+      document.getElementById('timerDisplay').innerText =
+        `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+      document.getElementById('timerMode').innerText =
+        timerModeValue === 'focus' ? 'Focus Session' : 'Break Session';
+      document.getElementById('pomoStartBtn').innerText =
+        timerInterval ? 'Pause' : (timerModeValue === 'focus' ? 'Start Focus' : 'Start Break');
+
+      const focusBtn = document.getElementById('focusModeBtn');
+      const breakBtn = document.getElementById('breakModeBtn');
+      const activeClasses = 'bg-abingdon-pink text-white shadow-sm';
+      const inactiveClasses = 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300';
+      focusBtn.className = `rounded-xl px-4 py-2 text-sm font-bold transition ${timerModeValue === 'focus' ? activeClasses : inactiveClasses}`;
+      breakBtn.className = `rounded-xl px-4 py-2 text-sm font-bold transition ${timerModeValue === 'break' ? activeClasses : inactiveClasses}`;
+      document.getElementById('timerRing').className =
+        `w-48 h-48 mx-auto rounded-full border-4 ${timerModeValue === 'focus' ? 'border-abingdon-pink' : 'border-emerald-500'} flex flex-col items-center justify-center shadow-inner transition-colors`;
+      document.getElementById('timerMode').className =
+        `text-xs font-semibold ${timerModeValue === 'focus' ? 'text-abingdon-pink' : 'text-emerald-500'} uppercase tracking-widest mt-1`;
+    }
+
+    function updatePresetButtons() {
+      document.querySelectorAll('.pomo-preset').forEach(button => {
+        const selected = button.dataset.preset === activePreset;
+        button.className = `pomo-preset rounded-xl border px-3 py-2.5 text-left transition ${
+          selected
+            ? 'border-abingdon-pink bg-pink-50 text-pink-700 dark:bg-pink-950/40 dark:text-pink-300'
+            : 'border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:border-pink-300'
+        }`;
+        button.setAttribute('aria-pressed', selected ? 'true' : 'false');
+      });
+    }
+
+    function stopTimerInterval() {
+      if (timerInterval) clearInterval(timerInterval);
+      timerInterval = null;
+      timerDeadline = null;
+    }
+
+    function selectPreset(presetName) {
+      const preset = pomodoroPresets[presetName];
+      if (!preset) return;
+      stopTimerInterval();
+      activePreset = presetName;
+      focusMinutes = preset.focus;
+      breakMinutes = preset.break;
+      document.getElementById('customFocusMinutes').value = focusMinutes;
+      document.getElementById('customBreakMinutes').value = breakMinutes;
+      timerModeValue = 'focus';
+      timerSeconds = focusMinutes * 60;
+      document.getElementById('timerStatus').innerText = `${preset.name} preset selected. Ready to focus.`;
+      updatePresetButtons();
+      updateTimerDisplay();
+    }
+
+    function applyCustomTimer() {
+      const focusInput = document.getElementById('customFocusMinutes');
+      const breakInput = document.getElementById('customBreakMinutes');
+      const focusValue = Number(focusInput.value);
+      const breakValue = Number(breakInput.value);
+
+      if (!Number.isInteger(focusValue) || focusValue < 1 || focusValue > 180) {
+        focusInput.focus();
+        document.getElementById('timerStatus').innerText = 'Enter a focus duration from 1 to 180 minutes.';
+        return;
+      }
+      if (!Number.isInteger(breakValue) || breakValue < 1 || breakValue > 60) {
+        breakInput.focus();
+        document.getElementById('timerStatus').innerText = 'Enter a break duration from 1 to 60 minutes.';
+        return;
+      }
+
+      stopTimerInterval();
+      focusMinutes = focusValue;
+      breakMinutes = breakValue;
+      activePreset = null;
+      timerModeValue = 'focus';
+      timerSeconds = focusMinutes * 60;
+      updatePresetButtons();
+      updateTimerDisplay();
+      document.getElementById('timerStatus').innerText =
+        `Custom timer applied: ${focusMinutes} minutes focus, ${breakMinutes} minutes break.`;
+    }
+
+    function setTimerMode(mode) {
+      if (mode !== 'focus' && mode !== 'break') return;
+      stopTimerInterval();
+      timerModeValue = mode;
+      timerSeconds = timerModeDuration();
+      updateTimerDisplay();
+      document.getElementById('timerStatus').innerText =
+        mode === 'focus' ? 'Focus session ready.' : 'Break session ready.';
+    }
+
+    function toggleTimer() {
+      const status = document.getElementById('timerStatus');
+      if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+        timerDeadline = null;
+        status.innerText = 'Timer paused.';
+        updateTimerDisplay();
+        return;
+      }
+
+      if (timerSeconds <= 0) timerSeconds = timerModeDuration();
+      timerDeadline = Date.now() + timerSeconds * 1000;
+      status.innerText = timerModeValue === 'focus' ? 'Focus session in progress.' : 'Break in progress.';
+      timerInterval = setInterval(() => {
+        timerSeconds = Math.max(0, Math.ceil((timerDeadline - Date.now()) / 1000));
+        updateTimerDisplay();
+        if (timerSeconds <= 0) finishTimerSession();
+      }, 200);
+      updateTimerDisplay();
+    }
+
+    function finishTimerSession() {
+      stopTimerInterval();
+      const finishedMode = timerModeValue;
+      timerModeValue = finishedMode === 'focus' ? 'break' : 'focus';
+      timerSeconds = timerModeDuration();
+      document.getElementById('timerStatus').innerText =
+        finishedMode === 'focus'
+          ? 'Focus session complete. Time for a break!'
+          : 'Break complete. Ready for another focus session.';
+      updateTimerDisplay();
+
+      if (document.getElementById('autoStartNext').checked) {
+        toggleTimer();
+      }
+    }
+
+    function resetTimer() {
+      stopTimerInterval();
+      timerSeconds = timerModeDuration();
+      document.getElementById('timerStatus').innerText = 'Timer reset. Ready when you are.';
+      updateTimerDisplay();
+    }
+
+    // Navigation Tabs
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(el => {
+        el.className = "tab-btn flex-1 py-2 rounded-lg text-xs font-bold transition flex items-center justify-center space-x-1.5 text-slate-600 dark:text-slate-400";
+      });
+
+      document.getElementById(`view-${tabId}`).classList.remove('hidden');
+      const activeBtn = document.getElementById(`tab-${tabId}`);
+      activeBtn.className = "tab-btn flex-1 py-2 rounded-lg text-xs font-bold transition flex items-center justify-center space-x-1.5 bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm";
+    }
+
+    // Init App
+    window.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+      renderTimetable();
+      renderExams();
+      renderGrades();
+      renderTasks();
+      updatePresetButtons();
+      updateTimerDisplay();
+    });
+  </script>
+</body>
+</html>
