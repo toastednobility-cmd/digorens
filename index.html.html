@@ -725,44 +725,200 @@
     }
 
     // Pomodoro Timer
-    let timerSeconds = 25 * 60;
-    let timerInterval = null;
+    
+/* Customisable Pomodoro Timer */
 
-    function updateTimerDisplay() {
-      const mins = Math.floor(timerSeconds / 60);
-      const secs = timerSeconds % 60;
-      document.getElementById('timerDisplay').innerText = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-    }
+const pomodoroPresets = {
+  classic: { focus: 25, break: 5, label: 'Classic Pomodoro' },
+  short:   { focus: 15, break: 3, label: 'Short Focus' },
+  deep:    { focus: 50, break: 10, label: 'Deep Work' },
+  long:    { focus: 90, break: 15, label: 'Long Focus' }
+};
 
-    function toggleTimer() {
-      const btn = document.getElementById('pomoStartBtn');
-      if (timerInterval) {
-        clearInterval(timerInterval);
-        timerInterval = null;
-        btn.innerText = 'Start Focus';
-      } else {
-        btn.innerText = 'Pause';
-        timerInterval = setInterval(() => {
-          if (timerSeconds > 0) {
-            timerSeconds--;
-            updateTimerDisplay();
-          } else {
-            clearInterval(timerInterval);
-            timerInterval = null;
-            alert('Focus session complete!');
-            resetTimer();
-          }
-        }, 1000);
-      }
-    }
+let focusMinutes = 25;
+let breakMinutes = 5;
+let timerModeValue = 'focus';
+let timerSeconds = focusMinutes * 60;
+let timerInterval = null;
+let currentPreset = 'classic';
+let timerEndsAt = null;
 
-    function resetTimer() {
-      if (timerInterval) clearInterval(timerInterval);
-      timerInterval = null;
-      timerSeconds = 25 * 60;
-      document.getElementById('pomoStartBtn').innerText = 'Start Focus';
-      updateTimerDisplay();
+function updateTimerDisplay() {
+  const mins = Math.floor(timerSeconds / 60);
+  const secs = timerSeconds % 60;
+
+  document.getElementById('timerDisplay').innerText =
+    `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+
+  document.getElementById('timerMode').innerText =
+    timerModeValue === 'focus' ? 'Focus Session' : 'Break Time';
+
+  document.getElementById('pomoStartBtn').innerText =
+    timerInterval ? 'Pause' :
+    timerSeconds === 0 ? 'Start Again' :
+    'Start ' + (timerModeValue === 'focus' ? 'Focus' : 'Break');
+
+  document.getElementById('focusModeBtn').className =
+    'flex-1 py-2 rounded-xl text-sm font-bold ' +
+    (timerModeValue === 'focus'
+      ? 'bg-abingdon-pink text-white'
+      : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300');
+
+  document.getElementById('breakModeBtn').className =
+    'flex-1 py-2 rounded-xl text-sm font-bold ' +
+    (timerModeValue === 'break'
+      ? 'bg-abingdon-pink text-white'
+      : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300');
+
+  document.getElementById('timerPresetLabel').innerText =
+    currentPreset === 'custom'
+      ? 'Custom Session'
+      : pomodoroPresets[currentPreset].label;
+}
+
+function stopTimer() {
+  if (timerInterval !== null) {
+    clearInterval(timerInterval);
+    timerInterval = null;
+  }
+
+  timerEndsAt = null;
+}
+
+function selectPreset(presetName) {
+  if (!pomodoroPresets[presetName]) return;
+
+  stopTimer();
+
+  currentPreset = presetName;
+  focusMinutes = pomodoroPresets[presetName].focus;
+  breakMinutes = pomodoroPresets[presetName].break;
+
+  document.getElementById('focusDuration').value = focusMinutes;
+  document.getElementById('breakDuration').value = breakMinutes;
+  document.getElementById('timerSettingsMessage').innerText =
+    'Preset selected.';
+
+  timerModeValue = 'focus';
+  timerSeconds = focusMinutes * 60;
+
+  document.getElementById('timerStatus').innerText =
+    'Preset ready. Start whenever you like.';
+
+  updateTimerDisplay();
+}
+
+function applyCustomTimer() {
+  const focusInput = document.getElementById('focusDuration');
+  const breakInput = document.getElementById('breakDuration');
+
+  const focus = Number(focusInput.value);
+  const rest = Number(breakInput.value);
+
+  if (
+    !Number.isInteger(focus) || focus < 1 || focus > 180 ||
+    !Number.isInteger(rest) || rest < 1 || rest > 60
+  ) {
+    document.getElementById('timerSettingsMessage').innerText =
+      'Enter a focus duration of 1–180 minutes and a break of 1–60 minutes.';
+    return;
+  }
+
+  stopTimer();
+
+  focusMinutes = focus;
+  breakMinutes = rest;
+  currentPreset = 'custom';
+  timerModeValue = 'focus';
+  timerSeconds = focusMinutes * 60;
+
+  document.getElementById('timerSettingsMessage').innerText =
+    'Custom durations applied.';
+  document.getElementById('timerStatus').innerText =
+    'Your custom session is ready.';
+
+  updateTimerDisplay();
+}
+
+function setTimerMode(mode) {
+  if (mode !== 'focus' && mode !== 'break') return;
+
+  stopTimer();
+  timerModeValue = mode;
+  timerSeconds = (mode === 'focus' ? focusMinutes : breakMinutes) * 60;
+
+  document.getElementById('timerStatus').innerText =
+    mode === 'focus' ? 'Ready to focus.' : 'Ready for a break.';
+
+  updateTimerDisplay();
+}
+
+function toggleTimer() {
+  if (timerInterval !== null) {
+    // Pause the countdown.
+    stopTimer();
+    document.getElementById('timerStatus').innerText = 'Timer paused.';
+    updateTimerDisplay();
+    return;
+  }
+
+  if (timerSeconds <= 0) {
+    timerSeconds = (timerModeValue === 'focus'
+      ? focusMinutes : breakMinutes) * 60;
+  }
+
+  timerEndsAt = Date.now() + timerSeconds * 1000;
+  document.getElementById('timerStatus').innerText =
+    timerModeValue === 'focus' ? 'Focus in progress.' : 'Break in progress.';
+
+  timerInterval = setInterval(() => {
+    // Calculate from the target time to reduce interval drift.
+    timerSeconds = Math.max(
+      0,
+      Math.ceil((timerEndsAt - Date.now()) / 1000)
+    );
+
+    updateTimerDisplay();
+
+    if (timerSeconds <= 0) {
+      stopTimer();
+      finishTimerSession();
     }
+  }, 250);
+
+  updateTimerDisplay();
+}
+
+function finishTimerSession() {
+  const completedMode = timerModeValue;
+  const autoStart = document.getElementById('autoStartNext').checked;
+
+  document.getElementById('timerStatus').innerText =
+    completedMode === 'focus'
+      ? 'Focus session complete! Time for a break.'
+      : 'Break complete! Ready to focus again.';
+
+  // Switch to the next session.
+  timerModeValue = completedMode === 'focus' ? 'break' : 'focus';
+  timerSeconds = (timerModeValue === 'focus'
+    ? focusMinutes : breakMinutes) * 60;
+
+  updateTimerDisplay();
+
+  if (autoStart) {
+    toggleTimer();
+  }
+}
+
+function resetTimer() {
+  stopTimer();
+  timerSeconds = (timerModeValue === 'focus'
+    ? focusMinutes : breakMinutes) * 60;
+
+  document.getElementById('timerStatus').innerText = 'Timer reset.';
+  updateTimerDisplay();
+}
+
 
     // Navigation Tabs
     function switchTab(tabId) {
