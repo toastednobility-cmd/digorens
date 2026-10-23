@@ -192,7 +192,7 @@
         </div>
       </div>
 
-      <!-- Mission Control AI Tactical Prep HUD (PAGINATED & FILTERABLE) -->
+      <!-- Mission Control AI Tactical Prep HUD -->
       <div class="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-2xl p-5 text-white shadow-xl border border-slate-700/80 relative overflow-hidden">
         <div class="absolute -right-10 -bottom-10 opacity-10 pointer-events-none">
           <i data-lucide="shield-alert" class="w-48 h-48"></i>
@@ -255,22 +255,35 @@
       </div>
     </div>
 
-    <!-- TAB 5: POMODORO TIMER -->
+    <!-- TAB 5: POMODORO TIMER WITH DURATION CUSTOMISATION -->
     <div id="view-pomodoro" class="tab-content hidden space-y-4">
-      <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 text-center shadow-sm max-w-md mx-auto">
-        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-1">Focus Study Timer</h2>
-        <p class="text-xs text-slate-500 mb-6">Stay focused during prep and revision</p>
+      <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 text-center shadow-sm max-w-md mx-auto space-y-5">
+        <div>
+          <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-0.5">Focus Study Timer</h2>
+          <p class="text-xs text-slate-500">Customize duration for prep or deep revision sessions</p>
+        </div>
 
-        <div class="w-48 h-48 mx-auto rounded-full border-4 border-abingdon-pink flex flex-col items-center justify-center mb-6 shadow-inner relative">
+        <!-- Quick Duration Selector -->
+        <div class="flex items-center justify-center space-x-2 bg-slate-100 dark:bg-slate-900 p-1.5 rounded-xl text-xs font-bold">
+          <button onclick="setTimerDuration(15)" id="pomoBtn15" class="flex-1 py-1.5 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-800 transition">15m</button>
+          <button onclick="setTimerDuration(25)" id="pomoBtn25" class="flex-1 py-1.5 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm">25m</button>
+          <button onclick="setTimerDuration(45)" id="pomoBtn45" class="flex-1 py-1.5 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-800 transition">45m</button>
+          <button onclick="setTimerDuration(60)" id="pomoBtn60" class="flex-1 py-1.5 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-800 transition">60m</button>
+          <button onclick="openCustomTimeModal()" id="pomoBtnCustom" class="px-2.5 py-1.5 rounded-lg text-abingdon-pink hover:bg-white dark:hover:bg-slate-800 transition flex items-center justify-center gap-1">
+            <i data-lucide="sliders" class="w-3.5 h-3.5"></i> Custom
+          </button>
+        </div>
+
+        <div class="w-48 h-48 mx-auto rounded-full border-4 border-abingdon-pink flex flex-col items-center justify-center shadow-inner relative">
           <span id="timerDisplay" class="text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white">25:00</span>
           <span id="timerMode" class="text-xs font-semibold text-abingdon-pink uppercase tracking-widest mt-1">Focus Session</span>
         </div>
 
-        <div class="flex items-center justify-center space-x-3">
+        <div class="flex items-center justify-center space-x-3 pt-1">
           <button id="pomoStartBtn" onclick="toggleTimer()" class="px-6 py-2.5 bg-abingdon-pink text-white rounded-xl text-sm font-bold shadow-md hover:opacity-90 transition">
             Start Focus
           </button>
-          <button onclick="resetTimer()" class="p-2.5 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-xl hover:bg-slate-200 transition">
+          <button onclick="resetTimer()" class="p-2.5 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-xl hover:bg-slate-200 transition" title="Reset Timer">
             <i data-lucide="rotate-ccw" class="w-5 h-5"></i>
           </button>
         </div>
@@ -278,6 +291,21 @@
     </div>
 
   </main>
+
+  <!-- MODAL: CUSTOM TIMER DURATION -->
+  <div id="customTimeModal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm">
+    <div class="bg-white dark:bg-slate-800 rounded-2xl p-5 w-full max-w-sm space-y-4 border border-slate-200 dark:border-slate-700">
+      <h3 class="font-bold text-slate-900 dark:text-white text-base">Custom Timer Duration</h3>
+      <div>
+        <label class="block text-xs font-semibold text-slate-500 mb-1">Duration in Minutes</label>
+        <input type="number" id="customTimeInput" min="1" max="180" placeholder="e.g. 30" class="w-full px-3 py-2 bg-slate-100 dark:bg-slate-700 rounded-xl text-sm outline-none border border-transparent focus:border-abingdon-pink">
+      </div>
+      <div class="flex space-x-2 pt-2">
+        <button onclick="closeCustomTimeModal()" class="flex-1 py-2 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-xl text-xs font-bold">Cancel</button>
+        <button onclick="saveCustomTime()" class="flex-1 py-2 bg-abingdon-pink text-white rounded-xl text-xs font-bold">Set Duration</button>
+      </div>
+    </div>
+  </div>
 
   <!-- MODAL: ADD LOG ENTRY -->
   <div id="gradeModal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm">
@@ -475,613 +503,4 @@
           { time: "08:35 - 09:00", name: "Tutor Time", code: "5/DB/JOW Tu - JOW", type: "reg" },
           { time: "09:00 - 09:55", name: "Physics", code: "5S Ph3 (H) - MCGW", room: "MCGW" },
           { time: "10:00 - 10:55", name: "Chemistry", code: "5S Ch3 (H) - IM", room: "IM" },
-          { time: "11:15 - 12:10", name: "Badminton", code: "5Bad2 - LHR", room: "Sports Hall" },
-          { time: "12:15 - 13:05", name: "Badminton", code: "5Bad2 - LHR", room: "Sports Hall" },
-          { time: "13:50 - 14:05", name: "PM Registration", code: "5/DB/JOW PMReg", type: "reg" },
-          { time: "14:05 - 14:55", name: "Biology", code: "5S Bi3 - RCB", room: "RCB" },
-          { time: "15:00 - 15:50", name: "Computer Science", code: "5A CS1 (H) - APW", room: "APW" },
-          { time: "16:00 - 17:00", name: "The Abingdonian", code: "The Abingdonian - OLH", type: "activity" }
-        ],
-        // Friday
-        [
-          { time: "08:35 - 09:00", name: "Tutor Time", code: "5/DB/JOW Tu - JOW", type: "reg" },
-          { time: "09:00 - 09:55", name: "Maths", code: "5M Ma1d - MRE", room: "MRE" },
-          { time: "10:00 - 10:55", name: "Latin", code: "5B La2 (H) - DJTF", room: "DJTF" },
-          { time: "11:15 - 12:10", name: "French", code: "5F Fr1 (H) - JMA", room: "JMA" },
-          { time: "13:20 - 13:50", name: "House Assembly", code: "5/DB/JOW House Ass", type: "reg" },
-          { time: "14:05 - 14:55", name: "English", code: "5S En3 (H) - CLW", room: "CLW" },
-          { time: "15:00 - 15:50", name: "Biology", code: "5S Bi3 - RCB", room: "RCB" },
-          { time: "16:00 - 17:00", name: "Debating", code: "Debating - IAM", type: "activity" }
-        ]
-      ]
-    };
-
-    let currentWeek = 'A';
-    let currentDay = 0; // Mon
-
-    function setWeek(week) {
-      currentWeek = week;
-      document.getElementById('weekLabel').innerText = `Week ${week}`;
-      document.getElementById('btnWeekA').className = week === 'A' ? "px-3 py-1 rounded-md text-xs font-bold bg-white dark:bg-slate-800 shadow-sm text-slate-900 dark:text-white" : "px-3 py-1 rounded-md text-xs font-bold text-slate-500 dark:text-slate-400";
-      document.getElementById('btnWeekB').className = week === 'B' ? "px-3 py-1 rounded-md text-xs font-bold bg-white dark:bg-slate-800 shadow-sm text-slate-900 dark:text-white" : "px-3 py-1 rounded-md text-xs font-bold text-slate-500 dark:text-slate-400";
-      renderTimetable();
-    }
-
-    function setDay(dayIdx) {
-      currentDay = dayIdx;
-      const buttons = document.querySelectorAll('.day-btn');
-      buttons.forEach((btn, idx) => {
-        if (idx === dayIdx) {
-          btn.className = "day-btn flex-1 min-w-[64px] py-2 rounded-xl text-xs font-bold border border-slate-200 dark:border-slate-700 text-center bg-abingdon-pink text-white border-abingdon-pink";
-        } else {
-          btn.className = "day-btn flex-1 min-w-[64px] py-2 rounded-xl text-xs font-bold border border-slate-200 dark:border-slate-700 text-center bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300";
-        }
-      });
-      renderTimetable();
-    }
-
-    function renderTimetable() {
-      const container = document.getElementById('timetablePeriods');
-      const periods = timetableData[currentWeek][currentDay];
-      
-      container.innerHTML = periods.map(p => {
-        let badgeClass = "bg-pink-100 text-pink-700 dark:bg-pink-950/50 dark:text-pink-300";
-        if (p.type === 'reg') badgeClass = "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400";
-        if (p.type === 'activity') badgeClass = "bg-purple-100 text-purple-700 dark:bg-purple-950/50 dark:text-purple-300";
-        if (p.type === 'special') badgeClass = "bg-amber-100 text-amber-700 dark:bg-amber-950/50 dark:text-amber-300";
-
-        return `
-          <div class="bg-white dark:bg-slate-800 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-700 flex items-center justify-between shadow-sm">
-            <div class="space-y-0.5">
-              <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">${p.time}</span>
-              <h4 class="font-bold text-slate-900 dark:text-white text-sm">${p.name}</h4>
-              <p class="text-xs text-slate-500 font-mono">${p.code}</p>
-            </div>
-            ${p.room ? `<span class="px-2.5 py-1 rounded-lg text-xs font-bold ${badgeClass}">${p.room}</span>` : `<span class="px-2.5 py-1 rounded-lg text-xs font-bold ${badgeClass}">${p.type || 'Event'}</span>`}
-          </div>
-        `;
-      }).join('');
-    }
-
-    // Exam Countdowns
-    let exams = JSON.parse(localStorage.getItem('noah_exams')) || [];
-
-    function renderExams() {
-      const container = document.getElementById('examContainer');
-      if (exams.length === 0) {
-        container.innerHTML = `<p class="text-xs text-slate-400 italic col-span-2 text-center py-2">No upcoming exams added yet.</p>`;
-        return;
-      }
-      container.innerHTML = exams.map(e => {
-        const target = new Date(e.date);
-        const today = new Date();
-        const diffTime = target - today;
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-        
-        return `
-          <div class="bg-slate-50 dark:bg-slate-900/50 p-3 rounded-xl border border-slate-200/80 dark:border-slate-700/80 flex items-center justify-between">
-            <div>
-              <h4 class="font-bold text-slate-900 dark:text-white text-xs">${e.title}</h4>
-              <p class="text-[11px] text-slate-500">${new Date(e.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
-            </div>
-            <div class="text-right">
-              <span class="text-lg font-black text-abingdon-pink">${diffDays > 0 ? diffDays : 0}</span>
-              <span class="text-[10px] text-slate-400 block font-semibold">days left</span>
-            </div>
-          </div>
-        `;
-      }).join('');
-    }
-
-    function openExamModal() {
-      document.getElementById('examTitleInput').value = '';
-      document.getElementById('examDateInput').value = '';
-      document.getElementById('examModal').classList.remove('hidden');
-    }
-
-    function closeExamModal() {
-      document.getElementById('examModal').classList.add('hidden');
-    }
-
-    function saveExam() {
-      const title = document.getElementById('examTitleInput').value.trim();
-      const date = document.getElementById('examDateInput').value;
-      if (!title || !date) return;
-
-      exams.push({ id: 'e_' + Date.now(), title, date });
-      localStorage.setItem('noah_exams', JSON.stringify(exams));
-      renderExams();
-      closeExamModal();
-    }
-
-    // Customizable Grade Logger Data
-    let subjects = JSON.parse(localStorage.getItem('noah_subjects')) || [
-      { id: 'maths', name: 'Maths', target: '9', logs: [] },
-      { id: 'bio', name: 'Biology', target: '8', logs: [] },
-      { id: 'chem', name: 'Chemistry', target: '8', logs: [] },
-      { id: 'cs', name: 'Computer Science', target: '9', logs: [] },
-      { id: 'latin', name: 'Latin', target: '8', logs: [] },
-      { id: 'french', name: 'French', target: '8', logs: [] },
-      { id: 'geog', name: 'Geography', target: '8', logs: [] },
-      { id: 'phys', name: 'Physics', target: '9', logs: [] }
-    ];
-
-    function renderGrades() {
-      const container = document.getElementById('subjectsList');
-      container.innerHTML = subjects.map(s => {
-        return `
-          <div class="bg-white dark:bg-slate-800 rounded-2xl p-4 border border-slate-200 dark:border-slate-700 shadow-sm space-y-3">
-            <div class="flex items-center justify-between">
-              <div>
-                <h3 class="font-bold text-slate-900 dark:text-white text-base">${s.name}</h3>
-                <span class="text-xs text-slate-500">Target Grade: <strong class="text-abingdon-pink">${s.target}</strong></span>
-              </div>
-              <div class="flex items-center space-x-1">
-                <button onclick="openEditTargetModal('${s.id}', '${s.target}')" title="Edit Target Grade" class="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200">
-                  <i data-lucide="edit-3" class="w-4 h-4"></i>
-                </button>
-                <button onclick="openAddGradeModal('${s.id}')" title="Add Grade Mark" class="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200">
-                  <i data-lucide="plus" class="w-4 h-4"></i>
-                </button>
-              </div>
-            </div>
-            
-            <div class="space-y-1.5">
-              ${s.logs.length === 0 ? '<p class="text-xs text-slate-400 italic">No assessment marks logged yet.</p>' : 
-                s.logs.map(l => `
-                  <div class="flex items-center justify-between text-xs p-2 rounded-xl bg-slate-50 dark:bg-slate-900/50">
-                    <span class="font-medium text-slate-700 dark:text-slate-300">${l.title}</span>
-                    <div class="flex items-center space-x-2">
-                      <span class="text-[10px] text-slate-400">${l.date}</span>
-                      <span class="font-bold text-abingdon-pink bg-pink-50 dark:bg-pink-950/50 px-2 py-0.5 rounded-md">${l.score}</span>
-                    </div>
-                  </div>
-                `).join('')
-              }
-            </div>
-          </div>
-        `;
-      }).join('');
-      lucide.createIcons();
-    }
-
-    function openAddGradeModal(subjectId) {
-      document.getElementById('gradeSubjectId').value = subjectId;
-      document.getElementById('gradeTitleInput').value = '';
-      document.getElementById('gradeScoreInput').value = '';
-      document.getElementById('gradeDateInput').value = new Date().toISOString().split('T')[0];
-      document.getElementById('gradeModal').classList.remove('hidden');
-    }
-
-    function closeGradeModal() {
-      document.getElementById('gradeModal').classList.add('hidden');
-    }
-
-    function saveGradeEntry() {
-      const subId = document.getElementById('gradeSubjectId').value;
-      const title = document.getElementById('gradeTitleInput').value.trim();
-      const score = document.getElementById('gradeScoreInput').value.trim();
-      const date = document.getElementById('gradeDateInput').value;
-
-      if (!title || !score) return;
-
-      const sub = subjects.find(s => s.id === subId);
-      if (sub) {
-        sub.logs.unshift({ title, score, date });
-        localStorage.setItem('noah_subjects', JSON.stringify(subjects));
-        renderGrades();
-        closeGradeModal();
-      }
-    }
-
-    function openEditTargetModal(subjectId, currentTarget) {
-      document.getElementById('targetSubjectId').value = subjectId;
-      document.getElementById('targetGradeInput').value = currentTarget;
-      document.getElementById('targetModal').classList.remove('hidden');
-    }
-
-    function closeTargetModal() {
-      document.getElementById('targetModal').classList.add('hidden');
-    }
-
-    function saveTargetGrade() {
-      const subId = document.getElementById('targetSubjectId').value;
-      const newTarget = document.getElementById('targetGradeInput').value.trim();
-      if (!newTarget) return;
-
-      const sub = subjects.find(s => s.id === subId);
-      if (sub) {
-        sub.target = newTarget;
-        localStorage.setItem('noah_subjects', JSON.stringify(subjects));
-        renderGrades();
-        closeTargetModal();
-      }
-    }
-
-    function openAddSubjectModal() {
-      const name = prompt("Enter new subject name:");
-      if (!name) return;
-      const target = prompt("Enter target grade (e.g., 8 or 9):", "8");
-      
-      const newSub = {
-        id: 'sub_' + Date.now(),
-        name: name,
-        target: target || '8',
-        logs: []
-      };
-      
-      subjects.push(newSub);
-      localStorage.setItem('noah_subjects', JSON.stringify(subjects));
-      renderGrades();
-    }
-
-    // SYLLABUS SPECIFICATION CHECKLIST & PAGINATED HUD
-    const defaultSyllabus = {
-      'maths': {
-        name: 'Maths',
-        topics: [
-          { id: 'm1', name: 'Number & Indices', weight: 'High Weighting', subs: ['Standard Form & Bounds', 'Surds & Rationalisation', 'Compound Growth & Decay'] },
-          { id: 'm2', name: 'Algebra & Equations', subs: ['Quadratic Formula & Factorising', 'Simultaneous Equations', 'Inequalities & Regions'] },
-          { id: 'm3', name: 'Geometry & Trigonometry', subs: ['Circle Theorems', 'Sine & Cosine Rule in 3D', 'Vectors & Geometric Proofs'] },
-          { id: 'm4', name: 'Statistics & Probability', subs: ['Cumulative Frequency & Box Plots', 'Conditional Probability Trees', 'Histogram Analysis'] }
-        ]
-      },
-      'bio': {
-        name: 'Biology',
-        topics: [
-          { id: 'b1', name: 'Cells & Transport', weight: 'High Weighting', subs: ['Eukaryotic vs Prokaryotic cells', 'Osmosis, Diffusion & Active Transport', 'Enzyme Activity & Kinetics'] },
-          { id: 'b2', name: 'Organism Physiology', subs: ['Aerobic & Anaerobic Respiration', 'Gas Exchange in Alveoli', 'Heart Structure & Circulation'] },
-          { id: 'b3', name: 'Inheritance & Genetics', subs: ['Mitosis vs Meiosis', 'Monohybrid Crosses & Pedigrees', 'DNA Structure & Protein Synthesis'] },
-          { id: 'b4', name: 'Ecology & Ecosystems', subs: ['Energy Transfer & Trophic Levels', 'Carbon & Nitrogen Cycles', 'Human Impact & Biodiversity'] }
-        ]
-      },
-      'chem': {
-        name: 'Chemistry',
-        topics: [
-          { id: 'c1', name: 'Stoichiometry & Moles', weight: 'High Weighting', subs: ['Reacting Mass Calculations', 'Gas Volumes at RTP', 'Empirical & Molecular Formulae'] },
-          { id: 'c2', name: 'Energetics & Kinetics', subs: ['Exothermic & Endothermic Enthalpy Changes', 'Activation Energy Diagrams', 'Factors Affecting Reaction Rates'] },
-          { id: 'c3', name: 'Organic Chemistry', subs: ['Alkanes & Fractional Distillation', 'Alkenes & Addition Reactions', 'Alcohols, Carboxylic Acids & Esters'] },
-          { id: 'c4', name: 'Electrochemistry & Equilibria', subs: ['Aqueous Electrolysis Rules', 'Dynamic Equilibrium & Le Chatelier', 'Reactivity Series & Redox'] }
-        ]
-      },
-      'cs': {
-        name: 'Computer Science',
-        topics: [
-          { id: 'cs1', name: 'Data Representation', weight: 'High Weighting', subs: ['Binary & Hexadecimal Conversions', 'Image & Sound Bitmaps', 'Data Compression & Encryption'] },
-          { id: 'cs2', name: 'Algorithms & Programming', subs: ['Flowcharts & Trace Tables', 'Python Subroutines & Arrays', 'Sorting & Searching Algorithms'] },
-          { id: 'cs3', name: 'Computer Architecture', subs: ['Von Neumann Architecture & CPU', 'Primary & Secondary Storage', 'Operating Systems & Utility Software'] },
-          { id: 'cs4', name: 'Networks & Cyber Security', subs: ['LAN, WAN & Topologies', 'TCP/IP Packet Switching Model', 'Malware, Phishing & Social Engineering'] }
-        ]
-      },
-      'latin': {
-        name: 'Latin',
-        topics: [
-          { id: 'l1', name: 'Advanced Grammar & Syntax', weight: 'High Weighting', subs: ['Subjunctive Clauses & Purpose/Result', 'Indirect Statements & Questions', 'Gerunds & Gerundives'] },
-          { id: 'l2', name: 'Set Text Literature (Verse)', subs: ['Virgil/Ovid Translation & Vocabulary', 'Hexameter Metre & Scansion', 'Stylistic & Rhetorical Devices'] },
-          { id: 'l3', name: 'Set Text Literature (Prose)', subs: ['Cicero/Tacitus Translation & Context', 'Historical Background Analysis', 'Argumentative Structure & Tone'] },
-          { id: 'l4', name: 'Civilisation & Translation Practice', subs: ['Unseen Translation Strategies', 'Roman Social & Political Life', 'Mythological References'] }
-        ]
-      },
-      'french': {
-        name: 'French',
-        topics: [
-          { id: 'f1', name: 'Speaking & Conversation', weight: 'High Weighting', subs: ['Photo Card Discussion Techniques', 'General Conversation Themes', 'Spoken Fluency & Idiomatic Phrases'] },
-          { id: 'f2', name: 'Advanced Writing & Essays', subs: ['150-Word Extended Essay Structure', 'Complex Past Tenses (Passé Composé/Imparfait)', 'Future & Conditional Expressions'] },
-          { id: 'f3', name: 'Listening & Reading Skills', subs: ['Authentic Audio Comprehension', 'Extract Translation Strategies', 'Multiple-Choice Inference'] },
-          { id: 'f4', name: 'Complex Grammar Mastery', subs: ['Subjunctive Mood Triggers', 'Relative Pronouns (dont/lequel)', 'Passive Voice Constructions'] }
-        ]
-      },
-      'geog': {
-        name: 'Geography',
-        topics: [
-          { id: 'g1', name: 'Physical Hazards & Landscapes', weight: 'High Weighting', subs: ['Plate Tectonics & Volcanic Hazards', 'River Basin Management & Flooding', 'Coastal Erosional Landforms'] },
-          { id: 'g2', name: 'Human & Urban Environments', subs: ['Megacity Growth & Urban Challenges', 'Sustainable Urban Living Solutions', 'Global Economic Development Gaps'] },
-          { id: 'g3', name: 'Ecosystems & Climate', subs: ['Tropical Rainforest Nutrient Cycling', 'Hot Desert Adaptations', 'Climate Change Mitigation Strategies'] },
-          { id: 'g4', name: 'Fieldwork & Geographical Skills', subs: ['Hypothesis Formulation & Sampling', 'Data Presentation & Statistical Tests', 'OS Map Grid Reference Analysis'] }
-        ]
-      },
-      'phys': {
-        name: 'Physics',
-        topics: [
-          { id: 'p1', name: 'Forces & Motion', weight: 'High Weighting', subs: ['Speed-Time Graphs & Acceleration', 'Newton’s Laws of Motion & Momentum', 'Work, Gravitational & Kinetic Energy'] },
-          { id: 'p2', name: 'Electricity & Circuits', subs: ['Ohm’s Law & I-V Characteristics', 'Series and Parallel Circuit Rules', 'Electrical Power & Mains Safety'] },
-          { id: 'p3', name: 'Waves & Electromagnetic Spectrum', subs: ['Wave Equation (v = fλ)', 'Reflection, Refraction & Snell’s Law', 'EM Spectrum Properties & Uses'] },
-          { id: 'p4', name: 'Radioactivity & Space', subs: ['Alpha, Beta & Gamma Decay Equations', 'Half-Life Calculations & Safety', 'Stellar Evolution & Big Bang Theory'] }
-        ]
-      }
-    };
-
-    let ragRatings = JSON.parse(localStorage.getItem('noah_rag_ratings')) || {};
-    let showAllMissions = false;
-    let hudFilter = 'all';
-
-    function setRag(subId, status) {
-      ragRatings[subId] = status;
-      localStorage.setItem('noah_rag_ratings', JSON.stringify(ragRatings));
-      renderSyllabus();
-    }
-
-    function toggleShowAllMissions() {
-      showAllMissions = !showAllMissions;
-      renderSyllabus();
-    }
-
-    function setHudFilter(filter) {
-      hudFilter = filter;
-      document.getElementById('hudFilterAll').className = filter === 'all' ? "px-2 py-0.5 rounded text-[10px] font-bold bg-white/20 text-white" : "px-2 py-0.5 rounded text-[10px] font-bold text-slate-400 hover:text-white";
-      document.getElementById('hudFilterRed').className = filter === 'red' ? "px-2 py-0.5 rounded text-[10px] font-bold bg-red-500 text-white" : "px-2 py-0.5 rounded text-[10px] font-bold text-slate-400 hover:text-white";
-      document.getElementById('hudFilterAmber').className = filter === 'amber' ? "px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500 text-white" : "px-2 py-0.5 rounded text-[10px] font-bold text-slate-400 hover:text-white";
-      renderSyllabus();
-    }
-
-    function scrollToTopic(subId) {
-      switchTab('syllabus');
-      const el = document.getElementById('sub_topic_' + subId);
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        el.classList.add('ring-2', 'ring-abingdon-pink', 'bg-pink-50', 'dark:bg-pink-950/30');
-        setTimeout(() => {
-          el.classList.remove('ring-2', 'ring-abingdon-pink', 'bg-pink-50', 'dark:bg-pink-950/30');
-        }, 2500);
-      }
-    }
-
-    function renderSyllabus() {
-      const container = document.getElementById('syllabusContainer');
-      const tacticalContainer = document.getElementById('tacticalMissionsContainer');
-      const badge = document.getElementById('missionCountBadge');
-      const toggleBtn = document.getElementById('toggleAllMissionsBtn');
-      const filterBar = document.getElementById('hudFilterBar');
-      
-      let redSubTopics = [];
-      let amberSubTopics = [];
-      let html = '';
-
-      Object.keys(defaultSyllabus).forEach(subKey => {
-        const sub = defaultSyllabus[subKey];
-        html += `
-          <div class="bg-white dark:bg-slate-800 rounded-2xl p-4 border border-slate-200 dark:border-slate-700 shadow-sm space-y-3">
-            <h3 class="font-bold text-slate-900 dark:text-white text-base">${sub.name}</h3>
-            <div class="space-y-3">
-        `;
-
-        sub.topics.forEach(t => {
-          html += `
-            <div class="p-3 bg-slate-50 dark:bg-slate-900/50 rounded-xl space-y-2 border border-slate-200/50 dark:border-slate-700/50">
-              <div class="flex items-center justify-between">
-                <span class="font-bold text-slate-800 dark:text-slate-200 text-xs">${t.name}</span>
-                <span class="text-[9px] px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-semibold">${t.weight || ''}</span>
-              </div>
-              <div class="space-y-1.5 pl-2 border-l-2 border-slate-200 dark:border-slate-700">
-          `;
-
-          t.subs.forEach((subName, sIdx) => {
-            const subId = `${t.id}_s${sIdx}`;
-            const rating = ragRatings[subId] || 'none';
-
-            if (rating === 'red') redSubTopics.push({ sub: sub.name, topic: `${t.name}: ${subName}`, subId: subId, rating: 'red' });
-            if (rating === 'amber') amberSubTopics.push({ sub: sub.name, topic: `${t.name}: ${subName}`, subId: subId, rating: 'amber' });
-
-            html += `
-              <div id="sub_topic_${subId}" class="flex items-center justify-between text-xs py-1 px-2 rounded-lg transition">
-                <span class="text-slate-600 dark:text-slate-300 text-[11px] font-medium">${subName}</span>
-                <div class="flex items-center space-x-1">
-                  <button onclick="setRag('${subId}', 'red')" class="px-2 py-0.5 rounded text-[9px] font-bold transition ${rating === 'red' ? 'bg-red-500 text-white shadow-sm' : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-red-200'}">R</button>
-                  <button onclick="setRag('${subId}', 'amber')" class="px-2 py-0.5 rounded text-[9px] font-bold transition ${rating === 'amber' ? 'bg-amber-500 text-white shadow-sm' : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-amber-200'}">A</button>
-                  <button onclick="setRag('${subId}', 'green')" class="px-2 py-0.5 rounded text-[9px] font-bold transition ${rating === 'green' ? 'bg-emerald-500 text-white shadow-sm' : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-emerald-200'}">G</button>
-                </div>
-              </div>
-            `;
-          });
-
-          html += `
-              </div>
-            </div>
-          `;
-        });
-
-        html += `
-            </div>
-          </div>
-        `;
-      });
-
-      container.innerHTML = html;
-
-      // Render Paginated Mission Control HUD
-      const totalMissions = redSubTopics.length + amberSubTopics.length;
-      badge.innerText = `${totalMissions} Active Missions`;
-
-      if (totalMissions > 4) {
-        toggleBtn.classList.remove('hidden');
-        toggleBtn.innerText = showAllMissions ? "Collapse Queue ▲" : `View All (${totalMissions}) ▼`;
-        filterBar.classList.remove('hidden');
-      } else {
-        toggleBtn.classList.add('hidden');
-        filterBar.classList.add('hidden');
-      }
-
-      if (totalMissions === 0) {
-        tacticalContainer.innerHTML = `
-          <div class="col-span-1 md:col-span-2 p-6 text-center text-slate-400 italic bg-slate-900/40 rounded-xl border border-slate-800 text-xs">
-            No tactical missions active. Rate sub-topics as <strong>R (Red)</strong> or <strong>A (Amber)</strong> in your syllabus checklist below to auto-generate interactive focus targets!
-          </div>
-        `;
-      } else {
-        let allMissions = [
-          ...redSubTopics.map(m => ({ ...m, type: 'RED ALERT', border: 'border-red-500/40 bg-red-950/20', badge: 'bg-red-500 text-white' })),
-          ...amberSubTopics.map(m => ({ ...m, type: 'AMBER WARNING', border: 'border-amber-500/40 bg-amber-950/20', badge: 'bg-amber-500 text-white' }))
-        ];
-
-        if (hudFilter === 'red') allMissions = allMissions.filter(m => m.rating === 'red');
-        if (hudFilter === 'amber') allMissions = allMissions.filter(m => m.rating === 'amber');
-
-        const displayedMissions = showAllMissions ? allMissions : allMissions.slice(0, 4);
-
-        let hudHtml = '';
-        displayedMissions.forEach(m => {
-          hudHtml += `
-            <div class="p-3.5 rounded-xl border ${m.border} backdrop-blur-sm flex flex-col justify-between space-y-2">
-              <div class="flex items-center justify-between cursor-pointer" onclick="scrollToTopic('${m.subId}')">
-                <span class="px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-wider ${m.badge}">${m.type}</span>
-                <span class="text-[10px] font-bold text-slate-300 underline">${m.sub} ↗</span>
-              </div>
-              <p class="text-xs font-bold text-white leading-tight cursor-pointer" onclick="scrollToTopic('${m.subId}')">${m.topic}</p>
-              <div class="pt-1 flex items-center justify-between text-[10px] border-t border-slate-700/50 mt-1">
-                <button onclick="setRag('${m.subId}', 'green')" class="text-emerald-400 hover:underline font-bold flex items-center gap-1">
-                  <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> Mark Mastered
-                </button>
-                <button onclick="switchTab('pomodoro')" class="text-abingdon-pink hover:underline font-bold flex items-center gap-1">
-                  Launch Timer <i data-lucide="arrow-right" class="w-3 h-3"></i>
-                </button>
-              </div>
-            </div>
-          `;
-        });
-
-        if (displayedMissions.length === 0) {
-          hudHtml = `<div class="col-span-1 md:col-span-2 text-center text-slate-400 text-xs py-4 italic">No missions matching current filter.</div>`;
-        }
-
-        tacticalContainer.innerHTML = hudHtml;
-        
-        if (showAllMissions) {
-          tacticalContainer.className = "grid grid-cols-1 md:grid-cols-2 gap-3 relative z-10 max-h-[380px] overflow-y-auto pr-1";
-        } else {
-          tacticalContainer.className = "grid grid-cols-1 md:grid-cols-2 gap-3 relative z-10";
-        }
-      }
-
-      lucide.createIcons();
-    }
-
-    // Regular Task Manager List
-    let tasks = JSON.parse(localStorage.getItem('noah_tasks')) || [];
-
-    function renderTasks() {
-      const container = document.getElementById('tasksList');
-      if (tasks.length === 0) {
-        container.innerHTML = `<p class="text-xs text-slate-400 italic text-center py-4">No tasks added yet. Click 'New Task' above.</p>`;
-        return;
-      }
-      
-      container.innerHTML = tasks.map(t => `
-        <div class="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-900/50 rounded-xl shadow-sm text-xs border border-slate-200/80 dark:border-slate-700/80">
-          <span class="${t.completed ? 'line-through text-slate-400' : 'text-slate-800 dark:text-slate-200'} font-medium text-sm">${t.title}</span>
-          <div class="flex items-center space-x-2">
-            <button onclick="toggleTask('${t.id}')" class="text-slate-400 hover:text-abingdon-pink p-1">
-              <i data-lucide="${t.completed ? 'check-circle-2' : 'circle'}" class="w-5 h-5 ${t.completed ? 'text-abingdon-pink' : ''}"></i>
-            </button>
-            <button onclick="deleteTask('${t.id}')" class="text-slate-400 hover:text-red-500 p-1">
-              <i data-lucide="trash-2" class="w-4 h-4"></i>
-            </button>
-          </div>
-        </div>
-      `).join('');
-      lucide.createIcons();
-    }
-
-    function openAddTaskModal() {
-      document.getElementById('taskTitleInput').value = '';
-      document.getElementById('taskModal').classList.remove('hidden');
-    }
-
-    function closeTaskModal() {
-      document.getElementById('taskModal').classList.add('hidden');
-    }
-
-    function saveTask() {
-      const title = document.getElementById('taskTitleInput').value.trim();
-      if (!title) return;
-
-      tasks.push({
-        id: 't_' + Date.now(),
-        title: title,
-        completed: false
-      });
-
-      localStorage.setItem('noah_tasks', JSON.stringify(tasks));
-      renderTasks();
-      closeTaskModal();
-    }
-
-    function toggleTask(id) {
-      const task = tasks.find(t => t.id === id);
-      if (task) {
-        task.completed = !task.completed;
-        localStorage.setItem('noah_tasks', JSON.stringify(tasks));
-        renderTasks();
-      }
-    }
-
-    function deleteTask(id) {
-      tasks = tasks.filter(t => t.id !== id);
-      localStorage.setItem('noah_tasks', JSON.stringify(tasks));
-      renderTasks();
-    }
-
-    // Pomodoro Timer
-    let timerSeconds = 25 * 60;
-    let timerInterval = null;
-
-    function updateTimerDisplay() {
-      const mins = Math.floor(timerSeconds / 60);
-      const secs = timerSeconds % 60;
-      document.getElementById('timerDisplay').innerText = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-    }
-
-    function toggleTimer() {
-      const btn = document.getElementById('pomoStartBtn');
-      if (timerInterval) {
-        clearInterval(timerInterval);
-        timerInterval = null;
-        btn.innerText = 'Start Focus';
-      } else {
-        btn.innerText = 'Pause';
-        timerInterval = setInterval(() => {
-          if (timerSeconds > 0) {
-            timerSeconds--;
-            updateTimerDisplay();
-          } else {
-            clearInterval(timerInterval);
-            timerInterval = null;
-            alert('Focus session complete!');
-            resetTimer();
-          }
-        }, 1000);
-      }
-    }
-
-    function resetTimer() {
-      if (timerInterval) clearInterval(timerInterval);
-      timerInterval = null;
-      timerSeconds = 25 * 60;
-      document.getElementById('pomoStartBtn').innerText = 'Start Focus';
-      updateTimerDisplay();
-    }
-
-    // Navigation Tabs
-    function switchTab(tabId) {
-      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-      document.querySelectorAll('.tab-btn').forEach(el => {
-        el.className = "tab-btn flex-1 py-2 px-3 rounded-lg text-xs font-bold transition flex items-center justify-center space-x-1.5 text-slate-600 dark:text-slate-400 min-w-[90px]";
-      });
-
-      document.getElementById(`view-${tabId}`).classList.remove('hidden');
-      const activeBtn = document.getElementById(`tab-${tabId}`);
-      activeBtn.className = "tab-btn flex-1 py-2 px-3 rounded-lg text-xs font-bold transition flex items-center justify-center space-x-1.5 bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm min-w-[90px]";
-    }
-
-    // Init App
-    window.addEventListener('DOMContentLoaded', () => {
-      lucide.createIcons();
-      renderTimetable();
-      renderExams();
-      renderGrades();
-      renderSyllabus();
-      renderTasks();
-      updateTimerDisplay();
-    });
-  </script>
-</body>
-</html>
+          { time: "11:15 -
