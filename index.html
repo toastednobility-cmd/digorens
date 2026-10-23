@@ -111,20 +111,24 @@
     </section>
 
     <!-- Navigation Tabs -->
-    <div class="flex space-x-1 bg-slate-200/60 dark:bg-slate-800 p-1 rounded-xl">
-      <button onclick="switchTab('timetable')" id="tab-timetable" class="tab-btn flex-1 py-2 rounded-lg text-xs font-bold transition flex items-center justify-center space-x-1.5 bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm">
+    <div class="flex space-x-1 bg-slate-200/60 dark:bg-slate-800 p-1 rounded-xl overflow-x-auto no-scrollbar">
+      <button onclick="switchTab('timetable')" id="tab-timetable" class="tab-btn flex-1 py-2 px-3 rounded-lg text-xs font-bold transition flex items-center justify-center space-x-1.5 bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm min-w-[90px]">
         <i data-lucide="calendar-days" class="w-4 h-4"></i>
         <span>Timetable</span>
       </button>
-      <button onclick="switchTab('grades')" id="tab-grades" class="tab-btn flex-1 py-2 rounded-lg text-xs font-bold transition flex items-center justify-center space-x-1.5 text-slate-600 dark:text-slate-400">
+      <button onclick="switchTab('grades')" id="tab-grades" class="tab-btn flex-1 py-2 px-3 rounded-lg text-xs font-bold transition flex items-center justify-center space-x-1.5 text-slate-600 dark:text-slate-400 min-w-[90px]">
         <i data-lucide="graduation-cap" class="w-4 h-4"></i>
-        <span>Grade Tracker</span>
+        <span>Grades</span>
       </button>
-      <button onclick="switchTab('tasks')" id="tab-tasks" class="tab-btn flex-1 py-2 rounded-lg text-xs font-bold transition flex items-center justify-center space-x-1.5 text-slate-600 dark:text-slate-400">
+      <button onclick="switchTab('syllabus')" id="tab-syllabus" class="tab-btn flex-1 py-2 px-3 rounded-lg text-xs font-bold transition flex items-center justify-center space-x-1.5 text-slate-600 dark:text-slate-400 min-w-[90px]">
+        <i data-lucide="book-open" class="w-4 h-4"></i>
+        <span>Syllabus</span>
+      </button>
+      <button onclick="switchTab('tasks')" id="tab-tasks" class="tab-btn flex-1 py-2 px-3 rounded-lg text-xs font-bold transition flex items-center justify-center space-x-1.5 text-slate-600 dark:text-slate-400 min-w-[90px]">
         <i data-lucide="check-square" class="w-4 h-4"></i>
         <span>Tasks</span>
       </button>
-      <button onclick="switchTab('pomodoro')" id="tab-pomodoro" class="tab-btn flex-1 py-2 rounded-lg text-xs font-bold transition flex items-center justify-center space-x-1.5 text-slate-600 dark:text-slate-400">
+      <button onclick="switchTab('pomodoro')" id="tab-pomodoro" class="tab-btn flex-1 py-2 px-3 rounded-lg text-xs font-bold transition flex items-center justify-center space-x-1.5 text-slate-600 dark:text-slate-400 min-w-[90px]">
         <i data-lucide="timer" class="w-4 h-4"></i>
         <span>Focus</span>
       </button>
@@ -179,7 +183,33 @@
       </div>
     </div>
 
-    <!-- TAB 3: TASKS (REGULAR LIST) -->
+    <!-- TAB 3: SYLLABUS RAG CHECKLIST & AI SUGGESTIONS -->
+    <div id="view-syllabus" class="tab-content hidden space-y-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-lg font-bold text-slate-900 dark:text-white">Topic Weighting & RAG Checklist</h2>
+          <p class="text-xs text-slate-500">Rate your topic confidence to generate revision suggestions</p>
+        </div>
+      </div>
+
+      <!-- AI Study Suggestions Card -->
+      <div class="bg-gradient-to-r from-amber-500 to-orange-600 rounded-2xl p-4 text-white shadow-sm border border-amber-400/20">
+        <div class="flex items-center space-x-2 mb-2">
+          <i data-lucide="sparkles" class="w-5 h-5 text-amber-100"></i>
+          <h3 class="font-bold text-sm text-white uppercase tracking-wider">Smart Revision Focus</h3>
+        </div>
+        <div id="ragSuggestions" class="space-y-2 text-xs">
+          <!-- Injected via JS -->
+        </div>
+      </div>
+
+      <!-- Syllabus Topics Container -->
+      <div id="syllabusContainer" class="space-y-4">
+        <!-- Injected via JS -->
+      </div>
+    </div>
+
+    <!-- TAB 4: TASKS (REGULAR LIST) -->
     <div id="view-tasks" class="tab-content hidden space-y-4">
       <div class="flex items-center justify-between">
         <div>
@@ -199,73 +229,26 @@
       </div>
     </div>
 
-    <!-- TAB 4: CUSTOMISABLE POMODORO TIMER -->
+    <!-- TAB 5: POMODORO TIMER -->
     <div id="view-pomodoro" class="tab-content hidden space-y-4">
-      <section class="bg-white dark:bg-slate-800 rounded-2xl p-5 sm:p-6 border border-slate-200 dark:border-slate-700 shadow-sm max-w-xl mx-auto space-y-5">
-        <div class="text-center">
-          <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-1">Focus Study Timer</h2>
-          <p class="text-xs text-slate-500 dark:text-slate-400">Choose a preset or make a session that suits you.</p>
+      <div class="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 text-center shadow-sm max-w-md mx-auto">
+        <h2 class="text-lg font-bold text-slate-900 dark:text-white mb-1">Focus Study Timer</h2>
+        <p class="text-xs text-slate-500 mb-6">Stay focused during prep and revision</p>
+
+        <div class="w-48 h-48 mx-auto rounded-full border-4 border-abingdon-pink flex flex-col items-center justify-center mb-6 shadow-inner relative">
+          <span id="timerDisplay" class="text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white">25:00</span>
+          <span id="timerMode" class="text-xs font-semibold text-abingdon-pink uppercase tracking-widest mt-1">Focus Session</span>
         </div>
 
-        <div>
-          <h3 class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">Pomodoro presets</h3>
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
-            <button type="button" data-preset="classic" onclick="selectPreset('classic')" class="pomo-preset rounded-xl border px-3 py-2.5 text-left transition">
-              <span class="block text-sm font-bold">Classic</span><span class="block text-xs opacity-75">25 / 5 min</span>
-            </button>
-            <button type="button" data-preset="short" onclick="selectPreset('short')" class="pomo-preset rounded-xl border px-3 py-2.5 text-left transition">
-              <span class="block text-sm font-bold">Short Focus</span><span class="block text-xs opacity-75">15 / 3 min</span>
-            </button>
-            <button type="button" data-preset="deep" onclick="selectPreset('deep')" class="pomo-preset rounded-xl border px-3 py-2.5 text-left transition">
-              <span class="block text-sm font-bold">Deep Work</span><span class="block text-xs opacity-75">50 / 10 min</span>
-            </button>
-            <button type="button" data-preset="long" onclick="selectPreset('long')" class="pomo-preset rounded-xl border px-3 py-2.5 text-left transition">
-              <span class="block text-sm font-bold">Long Focus</span><span class="block text-xs opacity-75">90 / 15 min</span>
-            </button>
-          </div>
-        </div>
-
-        <div class="rounded-xl bg-slate-50 dark:bg-slate-900/60 p-3 sm:p-4">
-          <h3 class="text-sm font-bold text-slate-900 dark:text-white mb-3">Custom durations</h3>
-          <div class="grid grid-cols-2 gap-3">
-            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300">
-              Focus (minutes)
-              <input id="customFocusMinutes" type="number" min="1" max="180" value="25" inputmode="numeric" class="mt-1 w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 text-sm text-slate-900 dark:text-white outline-none focus:border-abingdon-pink">
-            </label>
-            <label class="block text-xs font-semibold text-slate-600 dark:text-slate-300">
-              Break (minutes)
-              <input id="customBreakMinutes" type="number" min="1" max="60" value="5" inputmode="numeric" class="mt-1 w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 text-sm text-slate-900 dark:text-white outline-none focus:border-abingdon-pink">
-            </label>
-          </div>
-          <button type="button" onclick="applyCustomTimer()" class="mt-3 w-full rounded-xl border border-abingdon-pink text-abingdon-pink py-2 text-sm font-bold hover:bg-pink-50 dark:hover:bg-pink-950/30 transition">Apply custom durations</button>
-          <p class="mt-2 text-[11px] text-slate-500 dark:text-slate-400">Focus: 1–180 minutes. Break: 1–60 minutes.</p>
-        </div>
-
-        <div class="flex items-center justify-center gap-2">
-          <button id="focusModeBtn" type="button" onclick="setTimerMode('focus')" class="rounded-xl px-4 py-2 text-sm font-bold transition">Focus</button>
-          <button id="breakModeBtn" type="button" onclick="setTimerMode('break')" class="rounded-xl px-4 py-2 text-sm font-bold transition">Break</button>
-        </div>
-
-        <div class="text-center py-2">
-          <div id="timerRing" class="w-48 h-48 mx-auto rounded-full border-4 border-abingdon-pink flex flex-col items-center justify-center shadow-inner transition-colors">
-            <span id="timerDisplay" role="timer" aria-live="off" class="text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white">25:00</span>
-            <span id="timerMode" class="text-xs font-semibold text-abingdon-pink uppercase tracking-widest mt-1">Focus Session</span>
-          </div>
-          <p id="timerStatus" role="status" aria-live="polite" class="mt-3 text-xs text-slate-500 dark:text-slate-400">Ready when you are.</p>
-        </div>
-
-        <div class="flex items-center justify-center gap-3">
-          <button id="pomoStartBtn" type="button" onclick="toggleTimer()" class="px-6 py-2.5 bg-abingdon-pink text-white rounded-xl text-sm font-bold shadow-md hover:opacity-90 transition">Start Focus</button>
-          <button type="button" onclick="resetTimer()" class="p-2.5 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-600 transition" aria-label="Reset timer" title="Reset timer">
+        <div class="flex items-center justify-center space-x-3">
+          <button id="pomoStartBtn" onclick="toggleTimer()" class="px-6 py-2.5 bg-abingdon-pink text-white rounded-xl text-sm font-bold shadow-md hover:opacity-90 transition">
+            Start Focus
+          </button>
+          <button onclick="resetTimer()" class="p-2.5 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-xl hover:bg-slate-200 transition">
             <i data-lucide="rotate-ccw" class="w-5 h-5"></i>
           </button>
         </div>
-
-        <label class="flex items-center justify-center gap-2 text-xs text-slate-600 dark:text-slate-300">
-          <input id="autoStartNext" type="checkbox" class="rounded border-slate-300 text-abingdon-pink focus:ring-abingdon-pink">
-          Automatically start the next focus/break session
-        </label>
-      </section>
+      </div>
     </div>
 
   </main>
@@ -585,7 +568,7 @@
       closeExamModal();
     }
 
-    // Customizable Grade Logger Data (Empty subjects with default Abingdon structure)
+    // Customizable Grade Logger Data
     let subjects = JSON.parse(localStorage.getItem('noah_subjects')) || [
       { id: 'maths', name: 'Maths', target: '9', logs: [] },
       { id: 'bio', name: 'Biology', target: '8', logs: [] },
@@ -706,6 +689,168 @@
       renderGrades();
     }
 
+    // SYLLABUS RAG CHECKLIST & AI SUGGESTIONS
+    const defaultSyllabus = {
+      'maths': {
+        name: 'Maths',
+        topics: [
+          { id: 'm1', name: 'Quadratic Equations & Inequalities', weight: 'High Weighting' },
+          { id: 'm2', name: 'Trigonometry & 3D Vectors', weight: 'High Weighting' },
+          { id: 'm3', name: 'Functions & Transformations', weight: 'Medium Weighting' },
+          { id: 'm4', name: 'Probability & Cumulative Frequency', weight: 'Medium Weighting' }
+        ]
+      },
+      'bio': {
+        name: 'Biology',
+        topics: [
+          { id: 'b1', name: 'Cell Structure & Transport', weight: 'High Weighting' },
+          { id: 'b2', name: 'Respiration & Gas Exchange', weight: 'High Weighting' },
+          { id: 'b3', name: 'Genetics, Inheritance & DNA', weight: 'High Weighting' },
+          { id: 'b4', name: 'Ecology & Nutrient Cycles', weight: 'Medium Weighting' }
+        ]
+      },
+      'chem': {
+        name: 'Chemistry',
+        topics: [
+          { id: 'c1', name: 'Moles & Stoichiometry Calculations', weight: 'High Weighting' },
+          { id: 'c2', name: 'Organic Chemistry & Alkanes/Alkenes', weight: 'High Weighting' },
+          { id: 'c3', name: 'Electrolysis & Energetics', weight: 'High Weighting' },
+          { id: 'c4', name: 'Rates of Reaction & Equilibria', weight: 'Medium Weighting' }
+        ]
+      },
+      'cs': {
+        name: 'Computer Science',
+        topics: [
+          { id: 'cs1', name: 'Algorithms, Flowcharts & Pseudocode', weight: 'High Weighting' },
+          { id: 'cs2', name: 'Python Data Structures & Functions', weight: 'High Weighting' },
+          { id: 'cs3', name: 'Boolean Logic & Computer Architecture', weight: 'Medium Weighting' },
+          { id: 'cs4', name: 'Network Security & Protocols', weight: 'Medium Weighting' }
+        ]
+      },
+      'latin': {
+        name: 'Latin',
+        topics: [
+          { id: 'l1', name: 'Set Text Verse Translation', weight: 'High Weighting' },
+          { id: 'l2', name: 'Set Text Literature Analysis', weight: 'High Weighting' },
+          { id: 'l3', name: 'Subjunctive Clauses & Indirect Speech', weight: 'High Weighting' },
+          { id: 'l4', name: 'Core GCSE Vocabulary List', weight: 'Medium Weighting' }
+        ]
+      },
+      'french': {
+        name: 'French',
+        topics: [
+          { id: 'f1', name: 'Speaking Test Photo Card & Conversation', weight: 'High Weighting' },
+          { id: 'f2', name: 'Writing 150-Word Essay & Tenses', weight: 'High Weighting' },
+          { id: 'f3', name: 'Listening & Reading Comprehension', weight: 'Medium Weighting' },
+          { id: 'f4', name: 'Complex Grammar & Subjunctive', weight: 'Medium Weighting' }
+        ]
+      },
+      'geog': {
+        name: 'Geography',
+        topics: [
+          { id: 'g1', name: 'Hazardous Earth & Climate Change', weight: 'High Weighting' },
+          { id: 'g2', name: 'Urban Futures & Global Development', weight: 'High Weighting' },
+          { id: 'g3', name: 'UK Physical Landscapes (Rivers/Coasts)', weight: 'Medium Weighting' },
+          { id: 'g4', name: 'Fieldwork Data & Geographical Skills', weight: 'Medium Weighting' }
+        ]
+      },
+      'phys': {
+        name: 'Physics',
+        topics: [
+          { id: 'p1', name: 'Electricity & Circuit Calculations', weight: 'High Weighting' },
+          { id: 'p2', name: 'Forces, Motion & Momentum', weight: 'High Weighting' },
+          { id: 'p3', name: 'Waves, Light & Electromagnetic Spectrum', weight: 'High Weighting' },
+          { id: 'p4', name: 'Radioactivity & Particle Physics', weight: 'Medium Weighting' }
+        ]
+      }
+    };
+
+    let ragRatings = JSON.parse(localStorage.getItem('noah_rag_ratings')) || {};
+
+    function setRag(topicId, status) {
+      ragRatings[topicId] = status;
+      localStorage.setItem('noah_rag_ratings', JSON.stringify(ragRatings));
+      renderSyllabus();
+    }
+
+    function renderSyllabus() {
+      const container = document.getElementById('syllabusContainer');
+      const suggestionsContainer = document.getElementById('ragSuggestions');
+      
+      let redTopics = [];
+      let amberTopics = [];
+
+      let html = '';
+
+      Object.keys(defaultSyllabus).forEach(subKey => {
+        const sub = defaultSyllabus[subKey];
+        html += `
+          <div class="bg-white dark:bg-slate-800 rounded-2xl p-4 border border-slate-200 dark:border-slate-700 shadow-sm space-y-3">
+            <h3 class="font-bold text-slate-900 dark:text-white text-base">${sub.name}</h3>
+            <div class="space-y-2">
+        `;
+
+        sub.topics.forEach(t => {
+          const rating = ragRatings[t.id] || 'none';
+          
+          if (rating === 'red') redTopics.push({ sub: sub.name, topic: t.name, weight: t.weight });
+          if (rating === 'amber') amberTopics.push({ sub: sub.name, topic: t.name, weight: t.weight });
+
+          let badgeColor = "bg-slate-100 text-slate-500 dark:bg-slate-700 dark:text-slate-400";
+          if (rating === 'red') badgeColor = "bg-red-100 text-red-700 dark:bg-red-950/50 dark:text-red-300 font-bold";
+          if (rating === 'amber') badgeColor = "bg-amber-100 text-amber-700 dark:bg-amber-950/50 dark:text-amber-300 font-bold";
+          if (rating === 'green') badgeColor = "bg-emerald-100 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300 font-bold";
+
+          html += `
+            <div class="p-2.5 bg-slate-50 dark:bg-slate-900/50 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-2 border border-slate-200/50 dark:border-slate-700/50">
+              <div>
+                <div class="flex items-center space-x-2">
+                  <span class="font-semibold text-slate-800 dark:text-slate-200 text-xs">${t.name}</span>
+                  <span class="text-[9px] px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300">${t.weight}</span>
+                </div>
+              </div>
+              <div class="flex items-center space-x-1.5 self-end sm:self-auto">
+                <button onclick="setRag('${t.id}', 'red')" class="px-2.5 py-1 rounded-lg text-[10px] font-bold transition ${rating === 'red' ? 'bg-red-500 text-white shadow-sm' : 'bg-slate-200/70 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-red-200'}">Red</button>
+                <button onclick="setRag('${t.id}', 'amber')" class="px-2.5 py-1 rounded-lg text-[10px] font-bold transition ${rating === 'amber' ? 'bg-amber-500 text-white shadow-sm' : 'bg-slate-200/70 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-amber-200'}">Amber</button>
+                <button onclick="setRag('${t.id}', 'green')" class="px-2.5 py-1 rounded-lg text-[10px] font-bold transition ${rating === 'green' ? 'bg-emerald-500 text-white shadow-sm' : 'bg-slate-200/70 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-emerald-200'}">Green</button>
+              </div>
+            </div>
+          `;
+        });
+
+        html += `
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+
+      // Render Suggestions based on RAG status
+      if (redTopics.length === 0 && amberTopics.length === 0) {
+        suggestionsContainer.innerHTML = `<p class="text-amber-100 italic">Rate your topic confidence above (Red/Amber/Green) to generate study priorities.</p>`;
+      } else {
+        let sugHtml = '';
+        if (redTopics.length > 0) {
+          sugHtml += `<p class="font-bold text-white text-xs">Priority 1 (Red Topics - Revise First):</p><ul class="list-disc list-inside space-y-1">`;
+          redTopics.slice(0, 3).forEach(item => {
+            sugHtml += `<li class="text-amber-100"><strong>${item.sub}:</strong> ${item.topic} <span class="opacity-75">(${item.weight})</span></li>`;
+          });
+          sugHtml += `</ul>`;
+        }
+        if (amberTopics.length > 0 && redTopics.length < 3) {
+          sugHtml += `<p class="font-bold text-white text-xs mt-2">Priority 2 (Amber Topics - Secondary Focus):</p><ul class="list-disc list-inside space-y-1">`;
+          amberTopics.slice(0, 2).forEach(item => {
+            sugHtml += `<li class="text-amber-100"><strong>${item.sub}:</strong> ${item.topic}</li>`;
+          });
+          sugHtml += `</ul>`;
+        }
+        suggestionsContainer.innerHTML = sugHtml;
+      }
+
+      lucide.createIcons();
+    }
+
     // Regular Task Manager List
     let tasks = JSON.parse(localStorage.getItem('noah_tasks')) || [];
 
@@ -771,162 +916,43 @@
       renderTasks();
     }
 
-    // Customisable Pomodoro Timer
-    const pomodoroPresets = {
-      classic: { name: 'Classic', focus: 25, break: 5 },
-      short: { name: 'Short Focus', focus: 15, break: 3 },
-      deep: { name: 'Deep Work', focus: 50, break: 10 },
-      long: { name: 'Long Focus', focus: 90, break: 15 }
-    };
-    let activePreset = 'classic';
-    let focusMinutes = 25;
-    let breakMinutes = 5;
-    let timerModeValue = 'focus';
-    let timerSeconds = focusMinutes * 60;
+    // Pomodoro Timer
+    let timerSeconds = 25 * 60;
     let timerInterval = null;
-    let timerDeadline = null;
-
-    function timerModeDuration() {
-      return (timerModeValue === 'focus' ? focusMinutes : breakMinutes) * 60;
-    }
 
     function updateTimerDisplay() {
-      const mins = Math.floor(Math.max(0, timerSeconds) / 60);
-      const secs = Math.max(0, timerSeconds) % 60;
-      document.getElementById('timerDisplay').innerText =
-        `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-      document.getElementById('timerMode').innerText =
-        timerModeValue === 'focus' ? 'Focus Session' : 'Break Session';
-      document.getElementById('pomoStartBtn').innerText =
-        timerInterval ? 'Pause' : (timerModeValue === 'focus' ? 'Start Focus' : 'Start Break');
-
-      const focusBtn = document.getElementById('focusModeBtn');
-      const breakBtn = document.getElementById('breakModeBtn');
-      const activeClasses = 'bg-abingdon-pink text-white shadow-sm';
-      const inactiveClasses = 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300';
-      focusBtn.className = `rounded-xl px-4 py-2 text-sm font-bold transition ${timerModeValue === 'focus' ? activeClasses : inactiveClasses}`;
-      breakBtn.className = `rounded-xl px-4 py-2 text-sm font-bold transition ${timerModeValue === 'break' ? activeClasses : inactiveClasses}`;
-      document.getElementById('timerRing').className =
-        `w-48 h-48 mx-auto rounded-full border-4 ${timerModeValue === 'focus' ? 'border-abingdon-pink' : 'border-emerald-500'} flex flex-col items-center justify-center shadow-inner transition-colors`;
-      document.getElementById('timerMode').className =
-        `text-xs font-semibold ${timerModeValue === 'focus' ? 'text-abingdon-pink' : 'text-emerald-500'} uppercase tracking-widest mt-1`;
-    }
-
-    function updatePresetButtons() {
-      document.querySelectorAll('.pomo-preset').forEach(button => {
-        const selected = button.dataset.preset === activePreset;
-        button.className = `pomo-preset rounded-xl border px-3 py-2.5 text-left transition ${
-          selected
-            ? 'border-abingdon-pink bg-pink-50 text-pink-700 dark:bg-pink-950/40 dark:text-pink-300'
-            : 'border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:border-pink-300'
-        }`;
-        button.setAttribute('aria-pressed', selected ? 'true' : 'false');
-      });
-    }
-
-    function stopTimerInterval() {
-      if (timerInterval) clearInterval(timerInterval);
-      timerInterval = null;
-      timerDeadline = null;
-    }
-
-    function selectPreset(presetName) {
-      const preset = pomodoroPresets[presetName];
-      if (!preset) return;
-      stopTimerInterval();
-      activePreset = presetName;
-      focusMinutes = preset.focus;
-      breakMinutes = preset.break;
-      document.getElementById('customFocusMinutes').value = focusMinutes;
-      document.getElementById('customBreakMinutes').value = breakMinutes;
-      timerModeValue = 'focus';
-      timerSeconds = focusMinutes * 60;
-      document.getElementById('timerStatus').innerText = `${preset.name} preset selected. Ready to focus.`;
-      updatePresetButtons();
-      updateTimerDisplay();
-    }
-
-    function applyCustomTimer() {
-      const focusInput = document.getElementById('customFocusMinutes');
-      const breakInput = document.getElementById('customBreakMinutes');
-      const focusValue = Number(focusInput.value);
-      const breakValue = Number(breakInput.value);
-
-      if (!Number.isInteger(focusValue) || focusValue < 1 || focusValue > 180) {
-        focusInput.focus();
-        document.getElementById('timerStatus').innerText = 'Enter a focus duration from 1 to 180 minutes.';
-        return;
-      }
-      if (!Number.isInteger(breakValue) || breakValue < 1 || breakValue > 60) {
-        breakInput.focus();
-        document.getElementById('timerStatus').innerText = 'Enter a break duration from 1 to 60 minutes.';
-        return;
-      }
-
-      stopTimerInterval();
-      focusMinutes = focusValue;
-      breakMinutes = breakValue;
-      activePreset = null;
-      timerModeValue = 'focus';
-      timerSeconds = focusMinutes * 60;
-      updatePresetButtons();
-      updateTimerDisplay();
-      document.getElementById('timerStatus').innerText =
-        `Custom timer applied: ${focusMinutes} minutes focus, ${breakMinutes} minutes break.`;
-    }
-
-    function setTimerMode(mode) {
-      if (mode !== 'focus' && mode !== 'break') return;
-      stopTimerInterval();
-      timerModeValue = mode;
-      timerSeconds = timerModeDuration();
-      updateTimerDisplay();
-      document.getElementById('timerStatus').innerText =
-        mode === 'focus' ? 'Focus session ready.' : 'Break session ready.';
+      const mins = Math.floor(timerSeconds / 60);
+      const secs = timerSeconds % 60;
+      document.getElementById('timerDisplay').innerText = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
     }
 
     function toggleTimer() {
-      const status = document.getElementById('timerStatus');
+      const btn = document.getElementById('pomoStartBtn');
       if (timerInterval) {
         clearInterval(timerInterval);
         timerInterval = null;
-        timerDeadline = null;
-        status.innerText = 'Timer paused.';
-        updateTimerDisplay();
-        return;
-      }
-
-      if (timerSeconds <= 0) timerSeconds = timerModeDuration();
-      timerDeadline = Date.now() + timerSeconds * 1000;
-      status.innerText = timerModeValue === 'focus' ? 'Focus session in progress.' : 'Break in progress.';
-      timerInterval = setInterval(() => {
-        timerSeconds = Math.max(0, Math.ceil((timerDeadline - Date.now()) / 1000));
-        updateTimerDisplay();
-        if (timerSeconds <= 0) finishTimerSession();
-      }, 200);
-      updateTimerDisplay();
-    }
-
-    function finishTimerSession() {
-      stopTimerInterval();
-      const finishedMode = timerModeValue;
-      timerModeValue = finishedMode === 'focus' ? 'break' : 'focus';
-      timerSeconds = timerModeDuration();
-      document.getElementById('timerStatus').innerText =
-        finishedMode === 'focus'
-          ? 'Focus session complete. Time for a break!'
-          : 'Break complete. Ready for another focus session.';
-      updateTimerDisplay();
-
-      if (document.getElementById('autoStartNext').checked) {
-        toggleTimer();
+        btn.innerText = 'Start Focus';
+      } else {
+        btn.innerText = 'Pause';
+        timerInterval = setInterval(() => {
+          if (timerSeconds > 0) {
+            timerSeconds--;
+            updateTimerDisplay();
+          } else {
+            clearInterval(timerInterval);
+            timerInterval = null;
+            alert('Focus session complete!');
+            resetTimer();
+          }
+        }, 1000);
       }
     }
 
     function resetTimer() {
-      stopTimerInterval();
-      timerSeconds = timerModeDuration();
-      document.getElementById('timerStatus').innerText = 'Timer reset. Ready when you are.';
+      if (timerInterval) clearInterval(timerInterval);
+      timerInterval = null;
+      timerSeconds = 25 * 60;
+      document.getElementById('pomoStartBtn').innerText = 'Start Focus';
       updateTimerDisplay();
     }
 
@@ -934,12 +960,12 @@
     function switchTab(tabId) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
       document.querySelectorAll('.tab-btn').forEach(el => {
-        el.className = "tab-btn flex-1 py-2 rounded-lg text-xs font-bold transition flex items-center justify-center space-x-1.5 text-slate-600 dark:text-slate-400";
+        el.className = "tab-btn flex-1 py-2 px-3 rounded-lg text-xs font-bold transition flex items-center justify-center space-x-1.5 text-slate-600 dark:text-slate-400 min-w-[90px]";
       });
 
       document.getElementById(`view-${tabId}`).classList.remove('hidden');
       const activeBtn = document.getElementById(`tab-${tabId}`);
-      activeBtn.className = "tab-btn flex-1 py-2 rounded-lg text-xs font-bold transition flex items-center justify-center space-x-1.5 bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm";
+      activeBtn.className = "tab-btn flex-1 py-2 px-3 rounded-lg text-xs font-bold transition flex items-center justify-center space-x-1.5 bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm min-w-[90px]";
     }
 
     // Init App
@@ -948,8 +974,8 @@
       renderTimetable();
       renderExams();
       renderGrades();
+      renderSyllabus();
       renderTasks();
-      updatePresetButtons();
       updateTimerDisplay();
     });
   </script>
