@@ -183,23 +183,35 @@
       </div>
     </div>
 
-    <!-- TAB 3: SYLLABUS RAG CHECKLIST & AI SUGGESTIONS -->
+    <!-- TAB 3: SYLLABUS SPECIFICATION CHECKLIST & TACTICAL HUD -->
     <div id="view-syllabus" class="tab-content hidden space-y-4">
       <div class="flex items-center justify-between">
         <div>
-          <h2 class="text-lg font-bold text-slate-900 dark:text-white">Topic Weighting & RAG Checklist</h2>
-          <p class="text-xs text-slate-500">Rate your topic confidence to generate revision suggestions</p>
+          <h2 class="text-lg font-bold text-slate-900 dark:text-white">5th Year Specification Sub-Topics & RAG</h2>
+          <p class="text-xs text-slate-500">Granular tracking mapped to official GCSE/IGCSE exam boards</p>
         </div>
       </div>
 
-      <!-- AI Study Suggestions Card -->
-      <div class="bg-gradient-to-r from-amber-500 to-orange-600 rounded-2xl p-4 text-white shadow-sm border border-amber-400/20">
-        <div class="flex items-center space-x-2 mb-2">
-          <i data-lucide="sparkles" class="w-5 h-5 text-amber-100"></i>
-          <h3 class="font-bold text-sm text-white uppercase tracking-wider">Smart Revision Focus</h3>
+      <!-- NEW: Mission Control AI Tactical Prep HUD -->
+      <div class="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-2xl p-5 text-white shadow-xl border border-slate-700/80 relative overflow-hidden">
+        <div class="absolute -right-10 -bottom-10 opacity-10 pointer-events-none">
+          <i data-lucide="shield-alert" class="w-48 h-48"></i>
         </div>
-        <div id="ragSuggestions" class="space-y-2 text-xs">
-          <!-- Injected via JS -->
+        <div class="flex items-center justify-between mb-4 relative z-10">
+          <div class="flex items-center space-x-2.5">
+            <div class="p-2 bg-abingdon-pink/20 rounded-xl border border-abingdon-pink/30 text-abingdon-pink">
+              <i data-lucide="crosshair" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <h3 class="font-black text-sm uppercase tracking-wider text-white">Mission Control: AI Tactical Prep HUD</h3>
+              <p class="text-[11px] text-slate-400">Prioritised revision missions based on your sub-topic RAG ratings</p>
+            </div>
+          </div>
+          <span id="missionCountBadge" class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-abingdon-pink text-white shadow-md">0 Active Missions</span>
+        </div>
+        
+        <div id="tacticalMissionsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-3 relative z-10">
+          <!-- Injected dynamically -->
         </div>
       </div>
 
@@ -440,7 +452,7 @@
           { time: "12:15 - 13:05", name: "Maths", code: "5M Ma1d (H) - MRE", room: "MRE" },
           { time: "13:10 - 13:40", name: "IGCSE French Speaking", code: "French Speaking", type: "special" },
           { time: "13:50 - 14:05", name: "PM Registration", code: "5/DB/JOW PMReg", type: "reg" },
-          { time: "14:05 - 14:55", name: "Geography", code: "5C Gg - AJA", room: "AJA" },
+          { time: "14:05 - 14:55", name: "Geography", code: "5C Gg (H) - AJA", room: "AJA" },
           { time: "15:00 - 15:50", name: "Physics", code: "5S Ph3 - MCGW", room: "MCGW" },
           { time: "16:00 - 17:00", name: "SPORT Badminton Team", code: "Badminton Team - TEA", type: "activity" }
         ],
@@ -689,97 +701,97 @@
       renderGrades();
     }
 
-    // SYLLABUS RAG CHECKLIST & AI SUGGESTIONS
+    // SYLLABUS SPECIFICATION CHECKLIST & TACTICAL HUD
     const defaultSyllabus = {
       'maths': {
         name: 'Maths',
         topics: [
-          { id: 'm1', name: 'Quadratic Equations & Inequalities', weight: 'High Weighting' },
-          { id: 'm2', name: 'Trigonometry & 3D Vectors', weight: 'High Weighting' },
-          { id: 'm3', name: 'Functions & Transformations', weight: 'Medium Weighting' },
-          { id: 'm4', name: 'Probability & Cumulative Frequency', weight: 'Medium Weighting' }
+          { id: 'm1', name: 'Number & Indices', weight: 'High Weighting', subs: ['Standard Form & Bounds', 'Surds & Rationalisation', 'Compound Growth & Decay'] },
+          { id: 'm2', name: 'Algebra & Equations', subs: ['Quadratic Formula & Factorising', 'Simultaneous Equations', 'Inequalities & Regions'] },
+          { id: 'm3', name: 'Geometry & Trigonometry', subs: ['Circle Theorems', 'Sine & Cosine Rule in 3D', 'Vectors & Geometric Proofs'] },
+          { id: 'm4', name: 'Statistics & Probability', subs: ['Cumulative Frequency & Box Plots', 'Conditional Probability Trees', 'Histogram Analysis'] }
         ]
       },
       'bio': {
         name: 'Biology',
         topics: [
-          { id: 'b1', name: 'Cell Structure & Transport', weight: 'High Weighting' },
-          { id: 'b2', name: 'Respiration & Gas Exchange', weight: 'High Weighting' },
-          { id: 'b3', name: 'Genetics, Inheritance & DNA', weight: 'High Weighting' },
-          { id: 'b4', name: 'Ecology & Nutrient Cycles', weight: 'Medium Weighting' }
+          { id: 'b1', name: 'Cells & Transport', weight: 'High Weighting', subs: ['Eukaryotic vs Prokaryotic cells', 'Osmosis, Diffusion & Active Transport', 'Enzyme Activity & Kinetics'] },
+          { id: 'b2', name: 'Organism Physiology', subs: ['Aerobic & Anaerobic Respiration', 'Gas Exchange in Alveoli', 'Heart Structure & Circulation'] },
+          { id: 'b3', name: 'Inheritance & Genetics', subs: ['Mitosis vs Meiosis', 'Monohybrid Crosses & Pedigrees', 'DNA Structure & Protein Synthesis'] },
+          { id: 'b4', name: 'Ecology & Ecosystems', subs: ['Energy Transfer & Trophic Levels', 'Carbon & Nitrogen Cycles', 'Human Impact & Biodiversity'] }
         ]
       },
       'chem': {
         name: 'Chemistry',
         topics: [
-          { id: 'c1', name: 'Moles & Stoichiometry Calculations', weight: 'High Weighting' },
-          { id: 'c2', name: 'Organic Chemistry & Alkanes/Alkenes', weight: 'High Weighting' },
-          { id: 'c3', name: 'Electrolysis & Energetics', weight: 'High Weighting' },
-          { id: 'c4', name: 'Rates of Reaction & Equilibria', weight: 'Medium Weighting' }
+          { id: 'c1', name: 'Stoichiometry & Moles', weight: 'High Weighting', subs: ['Reacting Mass Calculations', 'Gas Volumes at RTP', 'Empirical & Molecular Formulae'] },
+          { id: 'c2', name: 'Energetics & Kinetics', subs: ['Exothermic & Endothermic Enthalpy Changes', 'Activation Energy Diagrams', 'Factors Affecting Reaction Rates'] },
+          { id: 'c3', name: 'Organic Chemistry', subs: ['Alkanes & Fractional Distillation', 'Alkenes & Addition Reactions', 'Alcohols, Carboxylic Acids & Esters'] },
+          { id: 'c4', name: 'Electrochemistry & Equilibria', subs: ['Aqueous Electrolysis Rules', 'Dynamic Equilibrium & Le Chatelier', 'Reactivity Series & Redox'] }
         ]
       },
       'cs': {
         name: 'Computer Science',
         topics: [
-          { id: 'cs1', name: 'Algorithms, Flowcharts & Pseudocode', weight: 'High Weighting' },
-          { id: 'cs2', name: 'Python Data Structures & Functions', weight: 'High Weighting' },
-          { id: 'cs3', name: 'Boolean Logic & Computer Architecture', weight: 'Medium Weighting' },
-          { id: 'cs4', name: 'Network Security & Protocols', weight: 'Medium Weighting' }
+          { id: 'cs1', name: 'Data Representation', weight: 'High Weighting', subs: ['Binary & Hexadecimal Conversions', 'Image & Sound Bitmaps', 'Data Compression & Encryption'] },
+          { id: 'cs2', name: 'Algorithms & Programming', subs: ['Flowcharts & Trace Tables', 'Python Subroutines & Arrays', 'Sorting & Searching Algorithms'] },
+          { id: 'cs3', name: 'Computer Architecture', subs: ['Von Neumann Architecture & CPU', 'Primary & Secondary Storage', 'Operating Systems & Utility Software'] },
+          { id: 'cs4', name: 'Networks & Cyber Security', subs: ['LAN, WAN & Topologies', 'TCP/IP Packet Switching Model', 'Malware, Phishing & Social Engineering'] }
         ]
       },
       'latin': {
         name: 'Latin',
         topics: [
-          { id: 'l1', name: 'Set Text Verse Translation', weight: 'High Weighting' },
-          { id: 'l2', name: 'Set Text Literature Analysis', weight: 'High Weighting' },
-          { id: 'l3', name: 'Subjunctive Clauses & Indirect Speech', weight: 'High Weighting' },
-          { id: 'l4', name: 'Core GCSE Vocabulary List', weight: 'Medium Weighting' }
+          { id: 'l1', name: 'Advanced Grammar & Syntax', weight: 'High Weighting', subs: ['Subjunctive Clauses & Purpose/Result', 'Indirect Statements & Questions', 'Gerunds & Gerundives'] },
+          { id: 'l2', name: 'Set Text Literature (Verse)', subs: ['Virgil/Ovid Translation & Vocabulary', 'Hexameter Metre & Scansion', 'Stylistic & Rhetorical Devices'] },
+          { id: 'l3', name: 'Set Text Literature (Prose)', subs: ['Cicero/Tacitus Translation & Context', 'Historical Background Analysis', 'Argumentative Structure & Tone'] },
+          { id: 'l4', name: 'Civilisation & Translation Practice', subs: ['Unseen Translation Strategies', 'Roman Social & Political Life', 'Mythological References'] }
         ]
       },
       'french': {
         name: 'French',
         topics: [
-          { id: 'f1', name: 'Speaking Test Photo Card & Conversation', weight: 'High Weighting' },
-          { id: 'f2', name: 'Writing 150-Word Essay & Tenses', weight: 'High Weighting' },
-          { id: 'f3', name: 'Listening & Reading Comprehension', weight: 'Medium Weighting' },
-          { id: 'f4', name: 'Complex Grammar & Subjunctive', weight: 'Medium Weighting' }
+          { id: 'f1', name: 'Speaking & Conversation', weight: 'High Weighting', subs: ['Photo Card Discussion Techniques', 'General Conversation Themes', 'Spoken Fluency & Idiomatic Phrases'] },
+          { id: 'f2', name: 'Advanced Writing & Essays', subs: ['150-Word Extended Essay Structure', 'Complex Past Tenses (Passé Composé/Imparfait)', 'Future & Conditional Expressions'] },
+          { id: 'f3', name: 'Listening & Reading Skills', subs: ['Authentic Audio Comprehension', 'Extract Translation Strategies', 'Multiple-Choice Inference'] },
+          { id: 'f4', name: 'Complex Grammar Mastery', subs: ['Subjunctive Mood Triggers', 'Relative Pronouns (dont/lequel)', 'Passive Voice Constructions'] }
         ]
       },
       'geog': {
         name: 'Geography',
         topics: [
-          { id: 'g1', name: 'Hazardous Earth & Climate Change', weight: 'High Weighting' },
-          { id: 'g2', name: 'Urban Futures & Global Development', weight: 'High Weighting' },
-          { id: 'g3', name: 'UK Physical Landscapes (Rivers/Coasts)', weight: 'Medium Weighting' },
-          { id: 'g4', name: 'Fieldwork Data & Geographical Skills', weight: 'Medium Weighting' }
+          { id: 'g1', name: 'Physical Hazards & Landscapes', weight: 'High Weighting', subs: ['Plate Tectonics & Volcanic Hazards', 'River Basin Management & Flooding', 'Coastal Erosional Landforms'] },
+          { id: 'g2', name: 'Human & Urban Environments', subs: ['Megacity Growth & Urban Challenges', 'Sustainable Urban Living Solutions', 'Global Economic Development Gaps'] },
+          { id: 'g3', name: 'Ecosystems & Climate', subs: ['Tropical Rainforest Nutrient Cycling', 'Hot Desert Adaptations', 'Climate Change Mitigation Strategies'] },
+          { id: 'g4', name: 'Fieldwork & Geographical Skills', subs: ['Hypothesis Formulation & Sampling', 'Data Presentation & Statistical Tests', 'OS Map Grid Reference Analysis'] }
         ]
       },
       'phys': {
         name: 'Physics',
         topics: [
-          { id: 'p1', name: 'Electricity & Circuit Calculations', weight: 'High Weighting' },
-          { id: 'p2', name: 'Forces, Motion & Momentum', weight: 'High Weighting' },
-          { id: 'p3', name: 'Waves, Light & Electromagnetic Spectrum', weight: 'High Weighting' },
-          { id: 'p4', name: 'Radioactivity & Particle Physics', weight: 'Medium Weighting' }
+          { id: 'p1', name: 'Forces & Motion', weight: 'High Weighting', subs: ['Speed-Time Graphs & Acceleration', 'Newton’s Laws of Motion & Momentum', 'Work, Gravitational & Kinetic Energy'] },
+          { id: 'p2', name: 'Electricity & Circuits', subs: ['Ohm’s Law & I-V Characteristics', 'Series and Parallel Circuit Rules', 'Electrical Power & Mains Safety'] },
+          { id: 'p3', name: 'Waves & Electromagnetic Spectrum', subs: ['Wave Equation (v = fλ)', 'Reflection, Refraction & Snell’s Law', 'EM Spectrum Properties & Uses'] },
+          { id: 'p4', name: 'Radioactivity & Space', subs: ['Alpha, Beta & Gamma Decay Equations', 'Half-Life Calculations & Safety', 'Stellar Evolution & Big Bang Theory'] }
         ]
       }
     };
 
     let ragRatings = JSON.parse(localStorage.getItem('noah_rag_ratings')) || {};
 
-    function setRag(topicId, status) {
-      ragRatings[topicId] = status;
+    function setRag(subId, status) {
+      ragRatings[subId] = status;
       localStorage.setItem('noah_rag_ratings', JSON.stringify(ragRatings));
       renderSyllabus();
     }
 
     function renderSyllabus() {
       const container = document.getElementById('syllabusContainer');
-      const suggestionsContainer = document.getElementById('ragSuggestions');
+      const tacticalContainer = document.getElementById('tacticalMissionsContainer');
+      const badge = document.getElementById('missionCountBadge');
       
-      let redTopics = [];
-      let amberTopics = [];
-
+      let redSubTopics = [];
+      let amberSubTopics = [];
       let html = '';
 
       Object.keys(defaultSyllabus).forEach(subKey => {
@@ -787,32 +799,39 @@
         html += `
           <div class="bg-white dark:bg-slate-800 rounded-2xl p-4 border border-slate-200 dark:border-slate-700 shadow-sm space-y-3">
             <h3 class="font-bold text-slate-900 dark:text-white text-base">${sub.name}</h3>
-            <div class="space-y-2">
+            <div class="space-y-3">
         `;
 
         sub.topics.forEach(t => {
-          const rating = ragRatings[t.id] || 'none';
-          
-          if (rating === 'red') redTopics.push({ sub: sub.name, topic: t.name, weight: t.weight });
-          if (rating === 'amber') amberTopics.push({ sub: sub.name, topic: t.name, weight: t.weight });
-
-          let badgeColor = "bg-slate-100 text-slate-500 dark:bg-slate-700 dark:text-slate-400";
-          if (rating === 'red') badgeColor = "bg-red-100 text-red-700 dark:bg-red-950/50 dark:text-red-300 font-bold";
-          if (rating === 'amber') badgeColor = "bg-amber-100 text-amber-700 dark:bg-amber-950/50 dark:text-amber-300 font-bold";
-          if (rating === 'green') badgeColor = "bg-emerald-100 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300 font-bold";
-
           html += `
-            <div class="p-2.5 bg-slate-50 dark:bg-slate-900/50 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-2 border border-slate-200/50 dark:border-slate-700/50">
-              <div>
-                <div class="flex items-center space-x-2">
-                  <span class="font-semibold text-slate-800 dark:text-slate-200 text-xs">${t.name}</span>
-                  <span class="text-[9px] px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300">${t.weight}</span>
+            <div class="p-3 bg-slate-50 dark:bg-slate-900/50 rounded-xl space-y-2 border border-slate-200/50 dark:border-slate-700/50">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-slate-800 dark:text-slate-200 text-xs">${t.name}</span>
+                <span class="text-[9px] px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-semibold">${t.weight}</span>
+              </div>
+              <div class="space-y-1.5 pl-2 border-l-2 border-slate-200 dark:border-slate-700">
+          `;
+
+          t.subs.forEach((subName, sIdx) => {
+            const subId = `${t.id}_s${sIdx}`;
+            const rating = ragRatings[subId] || 'none';
+
+            if (rating === 'red') redSubTopics.push({ sub: sub.name, topic: `${t.name}: ${subName}` });
+            if (rating === 'amber') amberSubTopics.push({ sub: sub.name, topic: `${t.name}: ${subName}` });
+
+            html += `
+              <div class="flex items-center justify-between text-xs py-1">
+                <span class="text-slate-600 dark:text-slate-300 text-[11px]">${subName}</span>
+                <div class="flex items-center space-x-1">
+                  <button onclick="setRag('${subId}', 'red')" class="px-2 py-0.5 rounded text-[9px] font-bold transition ${rating === 'red' ? 'bg-red-500 text-white shadow-sm' : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-red-200'}">R</button>
+                  <button onclick="setRag('${subId}', 'amber')" class="px-2 py-0.5 rounded text-[9px] font-bold transition ${rating === 'amber' ? 'bg-amber-500 text-white shadow-sm' : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-amber-200'}">A</button>
+                  <button onclick="setRag('${subId}', 'green')" class="px-2 py-0.5 rounded text-[9px] font-bold transition ${rating === 'green' ? 'bg-emerald-500 text-white shadow-sm' : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-emerald-200'}">G</button>
                 </div>
               </div>
-              <div class="flex items-center space-x-1.5 self-end sm:self-auto">
-                <button onclick="setRag('${t.id}', 'red')" class="px-2.5 py-1 rounded-lg text-[10px] font-bold transition ${rating === 'red' ? 'bg-red-500 text-white shadow-sm' : 'bg-slate-200/70 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-red-200'}">Red</button>
-                <button onclick="setRag('${t.id}', 'amber')" class="px-2.5 py-1 rounded-lg text-[10px] font-bold transition ${rating === 'amber' ? 'bg-amber-500 text-white shadow-sm' : 'bg-slate-200/70 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-amber-200'}">Amber</button>
-                <button onclick="setRag('${t.id}', 'green')" class="px-2.5 py-1 rounded-lg text-[10px] font-bold transition ${rating === 'green' ? 'bg-emerald-500 text-white shadow-sm' : 'bg-slate-200/70 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-emerald-200'}">Green</button>
+            `;
+          });
+
+          html += `
               </div>
             </div>
           `;
@@ -826,26 +845,41 @@
 
       container.innerHTML = html;
 
-      // Render Suggestions based on RAG status
-      if (redTopics.length === 0 && amberTopics.length === 0) {
-        suggestionsContainer.innerHTML = `<p class="text-amber-100 italic">Rate your topic confidence above (Red/Amber/Green) to generate study priorities.</p>`;
+      // Render Tactical HUD Missions
+      const totalMissions = redSubTopics.length + amberSubTopics.length;
+      badge.innerText = `${totalMissions} Active Missions`;
+
+      if (totalMissions === 0) {
+        tacticalContainer.innerHTML = `
+          <div class="col-span-1 md:col-span-2 p-6 text-center text-slate-400 italic bg-slate-900/40 rounded-xl border border-slate-800 text-xs">
+            No tactical missions active. Rate sub-topics as <strong>R (Red)</strong> or <strong>A (Amber)</strong> in your syllabus checklist below to auto-generate focus targets!
+          </div>
+        `;
       } else {
-        let sugHtml = '';
-        if (redTopics.length > 0) {
-          sugHtml += `<p class="font-bold text-white text-xs">Priority 1 (Red Topics - Revise First):</p><ul class="list-disc list-inside space-y-1">`;
-          redTopics.slice(0, 3).forEach(item => {
-            sugHtml += `<li class="text-amber-100"><strong>${item.sub}:</strong> ${item.topic} <span class="opacity-75">(${item.weight})</span></li>`;
-          });
-          sugHtml += `</ul>`;
-        }
-        if (amberTopics.length > 0 && redTopics.length < 3) {
-          sugHtml += `<p class="font-bold text-white text-xs mt-2">Priority 2 (Amber Topics - Secondary Focus):</p><ul class="list-disc list-inside space-y-1">`;
-          amberTopics.slice(0, 2).forEach(item => {
-            sugHtml += `<li class="text-amber-100"><strong>${item.sub}:</strong> ${item.topic}</li>`;
-          });
-          sugHtml += `</ul>`;
-        }
-        suggestionsContainer.innerHTML = sugHtml;
+        let hudHtml = '';
+        const missions = [
+          ...redSubTopics.map(m => ({ ...m, type: 'RED ALERT', border: 'border-red-500/40 bg-red-950/20', badge: 'bg-red-500 text-white' })),
+          ...amberSubTopics.map(m => ({ ...m, type: 'AMBER WARNING', border: 'border-amber-500/40 bg-amber-950/20', badge: 'bg-amber-500 text-white' }))
+        ];
+
+        missions.slice(0, 4).forEach(m => {
+          hudHtml += `
+            <div class="p-3.5 rounded-xl border ${m.border} backdrop-blur-sm flex flex-col justify-between space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-wider ${m.badge}">${m.type}</span>
+                <span class="text-[10px] font-bold text-slate-300">${m.sub}</span>
+              </div>
+              <p class="text-xs font-bold text-white leading-tight">${m.topic}</p>
+              <div class="pt-1 flex items-center justify-between text-[10px] text-slate-400 border-t border-slate-700/50 mt-1">
+                <span>Target: 1 Focus Session</span>
+                <button onclick="switchTab('pomodoro')" class="text-abingdon-pink hover:underline font-bold flex items-center gap-1">
+                  Launch Timer <i data-lucide="arrow-right" class="w-3 h-3"></i>
+                </button>
+              </div>
+            </div>
+          `;
+        });
+        tacticalContainer.innerHTML = hudHtml;
       }
 
       lucide.createIcons();
