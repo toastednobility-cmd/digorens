@@ -192,25 +192,39 @@
         </div>
       </div>
 
-      <!-- NEW: Mission Control AI Tactical Prep HUD -->
+      <!-- Mission Control AI Tactical Prep HUD (PAGINATED & FILTERABLE) -->
       <div class="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-2xl p-5 text-white shadow-xl border border-slate-700/80 relative overflow-hidden">
         <div class="absolute -right-10 -bottom-10 opacity-10 pointer-events-none">
           <i data-lucide="shield-alert" class="w-48 h-48"></i>
         </div>
-        <div class="flex items-center justify-between mb-4 relative z-10">
+        
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 relative z-10 border-b border-slate-700/60 pb-3">
           <div class="flex items-center space-x-2.5">
             <div class="p-2 bg-abingdon-pink/20 rounded-xl border border-abingdon-pink/30 text-abingdon-pink">
               <i data-lucide="crosshair" class="w-5 h-5"></i>
             </div>
             <div>
               <h3 class="font-black text-sm uppercase tracking-wider text-white">Mission Control: AI Tactical Prep HUD</h3>
-              <p class="text-[11px] text-slate-400">Prioritised revision missions based on your sub-topic RAG ratings</p>
+              <p class="text-[11px] text-slate-400">Targeted revision list generated from your syllabus ratings</p>
             </div>
           </div>
-          <span id="missionCountBadge" class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-abingdon-pink text-white shadow-md">0 Active Missions</span>
+          <div class="flex items-center space-x-2 self-start sm:self-auto">
+            <span id="missionCountBadge" class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-abingdon-pink text-white shadow-md">0 Active Missions</span>
+            <button id="toggleAllMissionsBtn" onclick="toggleShowAllMissions()" class="text-xs text-abingdon-pink font-semibold hover:underline hidden">
+              View All
+            </button>
+          </div>
+        </div>
+
+        <!-- Filter Controls for Missions -->
+        <div id="hudFilterBar" class="flex items-center space-x-2 mb-3 relative z-10 hidden">
+          <span class="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Filter:</span>
+          <button onclick="setHudFilter('all')" id="hudFilterAll" class="px-2 py-0.5 rounded text-[10px] font-bold bg-white/20 text-white">All</button>
+          <button onclick="setHudFilter('red')" id="hudFilterRed" class="px-2 py-0.5 rounded text-[10px] font-bold text-slate-400 hover:text-white">Red Only</button>
+          <button onclick="setHudFilter('amber')" id="hudFilterAmber" class="px-2 py-0.5 rounded text-[10px] font-bold text-slate-400 hover:text-white">Amber Only</button>
         </div>
         
-        <div id="tacticalMissionsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-3 relative z-10">
+        <div id="tacticalMissionsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-3 relative z-10 transition-all">
           <!-- Injected dynamically -->
         </div>
       </div>
@@ -452,7 +466,7 @@
           { time: "12:15 - 13:05", name: "Maths", code: "5M Ma1d (H) - MRE", room: "MRE" },
           { time: "13:10 - 13:40", name: "IGCSE French Speaking", code: "French Speaking", type: "special" },
           { time: "13:50 - 14:05", name: "PM Registration", code: "5/DB/JOW PMReg", type: "reg" },
-          { time: "14:05 - 14:55", name: "Geography", code: "5C Gg (H) - AJA", room: "AJA" },
+          { time: "14:05 - 14:55", name: "Geography", code: "5C Gg - AJA", room: "AJA" },
           { time: "15:00 - 15:50", name: "Physics", code: "5S Ph3 - MCGW", room: "MCGW" },
           { time: "16:00 - 17:00", name: "SPORT Badminton Team", code: "Badminton Team - TEA", type: "activity" }
         ],
@@ -529,7 +543,7 @@
       }).join('');
     }
 
-    // Exam Countdowns (Empty by default)
+    // Exam Countdowns
     let exams = JSON.parse(localStorage.getItem('noah_exams')) || [];
 
     function renderExams() {
@@ -701,7 +715,7 @@
       renderGrades();
     }
 
-    // SYLLABUS SPECIFICATION CHECKLIST & TACTICAL HUD
+    // SYLLABUS SPECIFICATION CHECKLIST & PAGINATED HUD
     const defaultSyllabus = {
       'maths': {
         name: 'Maths',
@@ -778,6 +792,8 @@
     };
 
     let ragRatings = JSON.parse(localStorage.getItem('noah_rag_ratings')) || {};
+    let showAllMissions = false;
+    let hudFilter = 'all';
 
     function setRag(subId, status) {
       ragRatings[subId] = status;
@@ -785,10 +801,37 @@
       renderSyllabus();
     }
 
+    function toggleShowAllMissions() {
+      showAllMissions = !showAllMissions;
+      renderSyllabus();
+    }
+
+    function setHudFilter(filter) {
+      hudFilter = filter;
+      document.getElementById('hudFilterAll').className = filter === 'all' ? "px-2 py-0.5 rounded text-[10px] font-bold bg-white/20 text-white" : "px-2 py-0.5 rounded text-[10px] font-bold text-slate-400 hover:text-white";
+      document.getElementById('hudFilterRed').className = filter === 'red' ? "px-2 py-0.5 rounded text-[10px] font-bold bg-red-500 text-white" : "px-2 py-0.5 rounded text-[10px] font-bold text-slate-400 hover:text-white";
+      document.getElementById('hudFilterAmber').className = filter === 'amber' ? "px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500 text-white" : "px-2 py-0.5 rounded text-[10px] font-bold text-slate-400 hover:text-white";
+      renderSyllabus();
+    }
+
+    function scrollToTopic(subId) {
+      switchTab('syllabus');
+      const el = document.getElementById('sub_topic_' + subId);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        el.classList.add('ring-2', 'ring-abingdon-pink', 'bg-pink-50', 'dark:bg-pink-950/30');
+        setTimeout(() => {
+          el.classList.remove('ring-2', 'ring-abingdon-pink', 'bg-pink-50', 'dark:bg-pink-950/30');
+        }, 2500);
+      }
+    }
+
     function renderSyllabus() {
       const container = document.getElementById('syllabusContainer');
       const tacticalContainer = document.getElementById('tacticalMissionsContainer');
       const badge = document.getElementById('missionCountBadge');
+      const toggleBtn = document.getElementById('toggleAllMissionsBtn');
+      const filterBar = document.getElementById('hudFilterBar');
       
       let redSubTopics = [];
       let amberSubTopics = [];
@@ -807,7 +850,7 @@
             <div class="p-3 bg-slate-50 dark:bg-slate-900/50 rounded-xl space-y-2 border border-slate-200/50 dark:border-slate-700/50">
               <div class="flex items-center justify-between">
                 <span class="font-bold text-slate-800 dark:text-slate-200 text-xs">${t.name}</span>
-                <span class="text-[9px] px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-semibold">${t.weight}</span>
+                <span class="text-[9px] px-1.5 py-0.5 rounded bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-semibold">${t.weight || ''}</span>
               </div>
               <div class="space-y-1.5 pl-2 border-l-2 border-slate-200 dark:border-slate-700">
           `;
@@ -816,12 +859,12 @@
             const subId = `${t.id}_s${sIdx}`;
             const rating = ragRatings[subId] || 'none';
 
-            if (rating === 'red') redSubTopics.push({ sub: sub.name, topic: `${t.name}: ${subName}` });
-            if (rating === 'amber') amberSubTopics.push({ sub: sub.name, topic: `${t.name}: ${subName}` });
+            if (rating === 'red') redSubTopics.push({ sub: sub.name, topic: `${t.name}: ${subName}`, subId: subId, rating: 'red' });
+            if (rating === 'amber') amberSubTopics.push({ sub: sub.name, topic: `${t.name}: ${subName}`, subId: subId, rating: 'amber' });
 
             html += `
-              <div class="flex items-center justify-between text-xs py-1">
-                <span class="text-slate-600 dark:text-slate-300 text-[11px]">${subName}</span>
+              <div id="sub_topic_${subId}" class="flex items-center justify-between text-xs py-1 px-2 rounded-lg transition">
+                <span class="text-slate-600 dark:text-slate-300 text-[11px] font-medium">${subName}</span>
                 <div class="flex items-center space-x-1">
                   <button onclick="setRag('${subId}', 'red')" class="px-2 py-0.5 rounded text-[9px] font-bold transition ${rating === 'red' ? 'bg-red-500 text-white shadow-sm' : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-red-200'}">R</button>
                   <button onclick="setRag('${subId}', 'amber')" class="px-2 py-0.5 rounded text-[9px] font-bold transition ${rating === 'amber' ? 'bg-amber-500 text-white shadow-sm' : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-amber-200'}">A</button>
@@ -845,33 +888,49 @@
 
       container.innerHTML = html;
 
-      // Render Tactical HUD Missions
+      // Render Paginated Mission Control HUD
       const totalMissions = redSubTopics.length + amberSubTopics.length;
       badge.innerText = `${totalMissions} Active Missions`;
+
+      if (totalMissions > 4) {
+        toggleBtn.classList.remove('hidden');
+        toggleBtn.innerText = showAllMissions ? "Collapse Queue ▲" : `View All (${totalMissions}) ▼`;
+        filterBar.classList.remove('hidden');
+      } else {
+        toggleBtn.classList.add('hidden');
+        filterBar.classList.add('hidden');
+      }
 
       if (totalMissions === 0) {
         tacticalContainer.innerHTML = `
           <div class="col-span-1 md:col-span-2 p-6 text-center text-slate-400 italic bg-slate-900/40 rounded-xl border border-slate-800 text-xs">
-            No tactical missions active. Rate sub-topics as <strong>R (Red)</strong> or <strong>A (Amber)</strong> in your syllabus checklist below to auto-generate focus targets!
+            No tactical missions active. Rate sub-topics as <strong>R (Red)</strong> or <strong>A (Amber)</strong> in your syllabus checklist below to auto-generate interactive focus targets!
           </div>
         `;
       } else {
-        let hudHtml = '';
-        const missions = [
+        let allMissions = [
           ...redSubTopics.map(m => ({ ...m, type: 'RED ALERT', border: 'border-red-500/40 bg-red-950/20', badge: 'bg-red-500 text-white' })),
           ...amberSubTopics.map(m => ({ ...m, type: 'AMBER WARNING', border: 'border-amber-500/40 bg-amber-950/20', badge: 'bg-amber-500 text-white' }))
         ];
 
-        missions.slice(0, 4).forEach(m => {
+        if (hudFilter === 'red') allMissions = allMissions.filter(m => m.rating === 'red');
+        if (hudFilter === 'amber') allMissions = allMissions.filter(m => m.rating === 'amber');
+
+        const displayedMissions = showAllMissions ? allMissions : allMissions.slice(0, 4);
+
+        let hudHtml = '';
+        displayedMissions.forEach(m => {
           hudHtml += `
             <div class="p-3.5 rounded-xl border ${m.border} backdrop-blur-sm flex flex-col justify-between space-y-2">
-              <div class="flex items-center justify-between">
+              <div class="flex items-center justify-between cursor-pointer" onclick="scrollToTopic('${m.subId}')">
                 <span class="px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-wider ${m.badge}">${m.type}</span>
-                <span class="text-[10px] font-bold text-slate-300">${m.sub}</span>
+                <span class="text-[10px] font-bold text-slate-300 underline">${m.sub} ↗</span>
               </div>
-              <p class="text-xs font-bold text-white leading-tight">${m.topic}</p>
-              <div class="pt-1 flex items-center justify-between text-[10px] text-slate-400 border-t border-slate-700/50 mt-1">
-                <span>Target: 1 Focus Session</span>
+              <p class="text-xs font-bold text-white leading-tight cursor-pointer" onclick="scrollToTopic('${m.subId}')">${m.topic}</p>
+              <div class="pt-1 flex items-center justify-between text-[10px] border-t border-slate-700/50 mt-1">
+                <button onclick="setRag('${m.subId}', 'green')" class="text-emerald-400 hover:underline font-bold flex items-center gap-1">
+                  <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> Mark Mastered
+                </button>
                 <button onclick="switchTab('pomodoro')" class="text-abingdon-pink hover:underline font-bold flex items-center gap-1">
                   Launch Timer <i data-lucide="arrow-right" class="w-3 h-3"></i>
                 </button>
@@ -879,7 +938,18 @@
             </div>
           `;
         });
+
+        if (displayedMissions.length === 0) {
+          hudHtml = `<div class="col-span-1 md:col-span-2 text-center text-slate-400 text-xs py-4 italic">No missions matching current filter.</div>`;
+        }
+
         tacticalContainer.innerHTML = hudHtml;
+        
+        if (showAllMissions) {
+          tacticalContainer.className = "grid grid-cols-1 md:grid-cols-2 gap-3 relative z-10 max-h-[380px] overflow-y-auto pr-1";
+        } else {
+          tacticalContainer.className = "grid grid-cols-1 md:grid-cols-2 gap-3 relative z-10";
+        }
       }
 
       lucide.createIcons();
